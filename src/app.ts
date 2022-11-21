@@ -1,19 +1,17 @@
 import express, { Express, Request, Response } from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
+import { connect } from "./config/db.config";
 
 import { Winary, IWinary } from "./models/winary";
 import { Sample, ISample } from "./models/sample";
 import { Wine, IWine } from "./models/wine";
 import { Catalogue, ICatalogue } from "./models/catalogue";
+import { CatalogueRouter } from "./routes/catalogue.routes";
+import { WinaryRouter } from "./routes/winary.routes";
 
-mongoose.connect('mongodb://localhost:27017/kostuj')
-    .then(() => {
-        console.log('mongo connection open')
-    })
-    .catch((err: any) => {
-        console.log(`err: ${err}`)
-    });
+// connect to databse
+connect()
 
 const app: Express = express();
 
@@ -28,65 +26,15 @@ app.get('/', (req: Request, res: Response) => {
     res.send("hello from typescript + express!!!")
 });
 
+const catalogueRouter = new CatalogueRouter();
+const winaryRouter = new WinaryRouter();
 
-app.get('/winaries', async (req: Request, res: Response) => {
-    try {
-        const winaries: IWinary[] = await Winary.find({})
+app.use('/catalogues', catalogueRouter.getRouter());
+app.use('/winaries', winaryRouter.getRouter());
 
-        res.status(200).json(winaries)
-    } catch(e) {
-        console.log(e)
-    }
-});
-
-app.get('/samples', async (req: Request, res: Response) => {
-    try {
-        const samples: ISample[] = await Sample.find({})
-
-        res.status(200).json(samples)
-    } catch(e) {
-        console.log(e)
-    }
-});
-
-app.get('/catalogues', async (req: Request, res: Response) => {
-    try {
-        const catalogues: ICatalogue[] = await Catalogue.find({})
-
-        res.status(200).json(catalogues)
-    } catch(e) {
-        console.log(e)
-    }
-});
-
-app.get('/catalogues/:id', async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params
-        const catalogue: ICatalogue | null = await Catalogue.findById(id)
-        if (catalogue != null) {
-            res.status(200).json(catalogue);
-        } else {
-            res.status(404);
-        }
-    } catch(e) {
-        console.log(e)
-    }
-});
-
-app.get('/catalogues/:id/samples', async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params
-        const samples: ISample[] = await Sample.find({
-            catalogueId: id
-        })
-        .populate({ path: 'wineId', model: Wine });
-
-        res.status(200).json(samples)
-    } catch(e) {
-        console.log(e)
-    }
-});
-
+app.all('*', (req, res) => {
+    res.send("not found");
+})
 
 const port = process.env.PORT || 3000
 app.listen(port, () => {
