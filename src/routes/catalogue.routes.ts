@@ -1,30 +1,28 @@
-import express, { Express, Request, Response, Router } from "express";
+import { Router } from "express";
 import { CatalogueController } from "../controllers/catalogue.controller";
 import catchAsync from "../utils/catchAsync";
+import { auth } from "../middleware/auth";
 
-export class CatalogueRouter {
-    private router: Router
-    private catalogueController: CatalogueController
+function getCatalogueRouter(): Router {
+    const router = Router();
+    const catalogueController = new CatalogueController();
 
-    constructor() {
-        this.router = Router()
-        this.catalogueController = new CatalogueController()
+    router.route('/')
+        .get(catchAsync(catalogueController.getCatalogues))
 
-        this.registerRoutes()
-    }
+    router.route('/:id')
+        .get(catchAsync(catalogueController.getCatalogueDetail))
 
-    getRouter(): Router {
-        return this.router
-    }
+    router.route('/:id/samples')
+        .get(catchAsync(catalogueController.getCatalogueSamples))
 
-    registerRoutes() {
-        this.router.route('/')
-            .get(catchAsync(this.catalogueController.getCatalogues))
+    router.route('/:id/samples/countsByColor')
+        .get(catchAsync(catalogueController.getSampleCountsByColor))
 
-        this.router.route('/:id')
-            .get(catchAsync(this.catalogueController.getCatalogueDetail))
+    router.route('/:id/followCatalogue')
+        .post(auth, catchAsync(catalogueController.changeUserFollowState))
 
-        this.router.route('/:id/samples')
-            .get(catchAsync(this.catalogueController.getCatalogueSamples))
-    }
+    return router;
 }
+
+export default getCatalogueRouter;

@@ -2,23 +2,14 @@ import { Router } from "express";
 import { WinaryController } from "../controllers/winary.controller";
 import catchAsync from "../utils/catchAsync";
 
-export class WinaryRouter {
-    private router: Router
-    private winaryController: WinaryController
+function getWinaryRouter(): Router {
+    const router = Router();
+    const winaryController = new WinaryController();
 
-    constructor() {
-        this.router = Router()
-        this.winaryController = new WinaryController()
+    router.route('/')
+        .get(catchAsync(winaryController.getWinaries))
 
-        this.registerRoutes()
-    }
-
-    getRouter(): Router {
-        return this.router
-    }
-
-    registerRoutes() {
-        this.router.route('/')
-            .get(catchAsync(this.winaryController.getWinaries))
-    }
+    return router;
 }
+
+export default getWinaryRouter;

@@ -25,5 +25,10 @@ const catalogueSchema = new Schema<ICatalogue>({
     },
     imageUrl: String
 });
+// catalogueSchema.set('toJSON', {
+//     virtuals: true,
+//     versionKey: false,
+//     transform: function (doc, ret) { delete ret._id }
+// });
 
 export const Catalogue = model<ICatalogue>("Catalogue", catalogueSchema);

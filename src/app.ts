@@ -1,18 +1,13 @@
 import express, { Express, Request, Response } from "express";
-import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import { connect } from "./config/db.config";
 
-import { Winary, IWinary } from "./models/winary";
-import { Sample, ISample } from "./models/sample";
-import { Wine, IWine } from "./models/wine";
-import { Catalogue, ICatalogue } from "./models/catalogue";
-import { CatalogueRouter } from "./routes/catalogue.routes";
-import { WinaryRouter } from "./routes/winary.routes";
+import getWinaryRouter from "./routes/winary.routes";
+import getCatalogueRouter from "./routes/catalogue.routes";
+import getUserRouter from "./routes/user.routes";
 
 // connect to databse
-connect()
-
+connect();
 const app: Express = express();
 
 // configure the app to use bodyParser()
@@ -26,11 +21,9 @@ app.get('/', (req: Request, res: Response) => {
     res.send("hello from typescript + express!!!")
 });
 
-const catalogueRouter = new CatalogueRouter();
-const winaryRouter = new WinaryRouter();
-
-app.use('/catalogues', catalogueRouter.getRouter());
-app.use('/winaries', winaryRouter.getRouter());
+app.use('/catalogues', getCatalogueRouter());
+app.use('/winaries', getWinaryRouter());
+app.use('/users', getUserRouter());
 
 app.all('*', (req, res) => {
     res.send("not found");

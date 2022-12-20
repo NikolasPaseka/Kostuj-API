@@ -1,4 +1,4 @@
-import * as Mongoose from "mongoose";
+import mongoose, * as Mongoose from "mongoose";
 //require('dotenv').config();
 
 let connection: Mongoose.Connection;
@@ -13,10 +13,11 @@ export const connect = () => {
 
     Mongoose.connect('mongodb://localhost:27017/kostuj')
     .then(() => {
-        console.log('mongo connection open')
+        console.log('mongo connection open');
+        transformSchemasToClient();
     })
     .catch((err: any) => {
-        console.log(`err: ${err}`)
+        console.log(`err: ${err}`);
     });
     connection = Mongoose.connection;
 }
@@ -34,3 +35,13 @@ export const disconnect = () => {
     });
 
 };
+
+export default function transformSchemasToClient() {
+    mongoose.set('toJSON', {
+        virtuals: true,
+        versionKey: false,
+        transform: (doc, converted) => {
+          delete converted._id;
+        }
+      });
+}
