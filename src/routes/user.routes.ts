@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { UserController } from "../controllers/user.controller";
+import { UserController } from "../controllers/UserController";
 import catchAsync from "../utils/catchAsync";
 
 function getUserRouter(): Router {

@@ -3,29 +3,29 @@ import { IUser, User } from "../models/user";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { SECRET_KEY } from "../middleware/auth";
+import { UserRepository } from "../repositories/UserRepository";
+import { ResponseError } from "../utils/ResponseError";
 
 export class UserController {
+    private userRepository = new UserRepository();
 
-    async getUsers(req: Request, res: Response) {
-        const users: IUser[] = await User.find({});
-        res.status(200).json(users);
+    getUsers = async (req: Request, res: Response) => {
+        const users: IUser[] = await this.userRepository.getUsers();
+
+        res.json(users);
     }
 
-    async register(req: Request, res: Response) {
+    register = async (req: Request, res: Response) => {
         const { email, password } = req.body;
 
-        const user = new User({ email, password });
-        await user.save();
-        res.status(200).json();
+        await this.userRepository.createUser(email, password);
+        res.json({ message: "Successfully registered" });
     }
 
-    async login(req: Request, res: Response) {
+    login = async (req: Request, res: Response) => {
         const { email, password } = req.body;
-        const foundUser = await User.findOne({ email: email });
+        const foundUser = await this.userRepository.getUserByEmail(email);
 
-        if (!foundUser) {
-            throw new Error('Name of user is not correct');
-        }
         const isMatch = bcrypt.compareSync(password, foundUser.password);
     
         if (isMatch) {
@@ -33,8 +33,7 @@ export class UserController {
                 expiresIn: '2 days',
             });
          
-            //return { user: { _id, name }, token: token };
-            return res.status(200).json({
+            return res.json({
                 user: {
                     id: foundUser._id,
                     email: foundUser.email
@@ -42,7 +41,7 @@ export class UserController {
                 token: token
             });
         } else {
-            throw new Error('Password is not correct');
+            throw new ResponseError("Incorrect credentials");
         }
     }
 }

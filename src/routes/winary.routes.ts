@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { WinaryController } from "../controllers/winary.controller";
+import { WinaryController } from "../controllers/WinaryController";
 import catchAsync from "../utils/catchAsync";
 
 function getWinaryRouter(): Router {

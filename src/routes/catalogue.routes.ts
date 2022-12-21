@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CatalogueController } from "../controllers/catalogue.controller";
+import { CatalogueController } from "../controllers/CatalogueController";
 import catchAsync from "../utils/catchAsync";
 import { auth } from "../middleware/auth";
 

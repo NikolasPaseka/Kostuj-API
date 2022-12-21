@@ -5,6 +5,7 @@ import { connect } from "./config/db.config";
 import getWinaryRouter from "./routes/winary.routes";
 import getCatalogueRouter from "./routes/catalogue.routes";
 import getUserRouter from "./routes/user.routes";
+import { errorHandler } from "./middleware/errorHandler";
 
 // connect to databse
 connect();
@@ -28,6 +29,8 @@ app.use('/users', getUserRouter());
 app.all('*', (req, res) => {
     res.send("not found");
 })
+
+app.use(errorHandler);
 
 const port = process.env.PORT || 3000
 app.listen(port, () => {
