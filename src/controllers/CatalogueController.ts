@@ -29,7 +29,14 @@ export class CatalogueController {
         const { id } = req.params;
         const samples = await this.catalogueRepository.getCatalogueSamples(id);
 
-        res.json(samples)
+        res.json(samples);
+    }
+
+    getCatalogueSampleDetail = async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const sample = await this.catalogueRepository.getCatalogueSampleDetail(id);
+
+        res.json(sample);
     }
 
     getSampleCountsByColor = async (req: Request, res: Response) => {
@@ -51,24 +58,5 @@ export class CatalogueController {
         const countsObject = Object.fromEntries(countsMap);
 
         res.json(countsObject);
-    }
-
-    changeUserFollowState = async (req: TokenRequest, res: Response) => {
-        const catalogueId = req.params.id;
-        const follow: boolean = req.body.follow;
-        const userId = req.token._id.toString();
-
-        const result = await this.catalogueRepository.getFollowedCatalogue(catalogueId, userId)
-
-        if (follow && !result) {
-            this.catalogueRepository.followCatalogue(catalogueId, userId);
-            return res.send("followed");
-        }
-        else if (!follow && result) {
-            this.catalogueRepository.unfollowCatalogue(result.id);
-            return res.send("unfollowed");
-        } else {
-            throw new ResponseError("Error occured while performing follow catalogue request");
-        }
     }
 }

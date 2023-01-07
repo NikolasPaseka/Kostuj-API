@@ -6,6 +6,8 @@ import getWinaryRouter from "./routes/winary.routes";
 import getCatalogueRouter from "./routes/catalogue.routes";
 import getUserRouter from "./routes/user.routes";
 import { errorHandler } from "./middleware/errorHandler";
+import getMapLocationRouter from "./routes/mapLocation.routes";
+import getWineRouter from "./routes/wines.routes";
 
 // connect to databse
 connect();
@@ -24,7 +26,9 @@ app.get('/', (req: Request, res: Response) => {
 
 app.use('/catalogues', getCatalogueRouter());
 app.use('/winaries', getWinaryRouter());
+app.use('/wines', getWineRouter());
 app.use('/users', getUserRouter());
+app.use("/mapLocations", getMapLocationRouter());
 
 app.all('*', (req, res) => {
     res.send("not found");

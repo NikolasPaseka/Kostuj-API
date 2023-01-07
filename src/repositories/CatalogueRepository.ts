@@ -1,6 +1,8 @@
 import { Catalogue, ICatalogue } from "../models/catalogue";
 import { FollowedCatalogue } from "../models/followedCatalogues";
+import { GrapeVarietal } from "../models/GrapeVarietal";
 import { Sample } from "../models/sample";
+import { Winary } from "../models/winary";
 import { IWine, Wine } from "../models/wine";
 import { ResponseError } from "../utils/ResponseError";
 
@@ -23,19 +25,31 @@ export class CatalogueRepository {
         return await Sample.find({
             catalogueId: catalogueId
         })
-        .populate({ path: 'wineId', model: Wine });
+        .populate({ 
+            path: "wineId", 
+            model: Wine,
+            populate: [{
+                path: "winaryId",
+                model: Winary
+            }, {
+                path: "grapeVarietals",
+                model: GrapeVarietal
+            }]
+        });
     }
 
-    async getFollowedCatalogue(catalogueId: string, userId: string) {
-       return await FollowedCatalogue.findOne({ catalogueId, userId });
-    }
-
-    async followCatalogue(catalogueId: string, userId: string) {
-        const followedCatalogue = new FollowedCatalogue({ catalogueId: catalogueId, userId: userId });
-        await followedCatalogue.save();
-    }
-
-    async unfollowCatalogue(id: string) {
-        await FollowedCatalogue.findOneAndDelete({_id: id});
+    async getCatalogueSampleDetail(id: string) {
+        return await Sample.findById(id)
+        .populate({ 
+            path: "wineId", 
+            model: Wine,
+            populate: [{
+                path: "winaryId",
+                model: Winary
+            }, {
+                path: "grapeVarietals",
+                model: GrapeVarietal
+            }]
+        });
     }
 }

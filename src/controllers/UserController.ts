@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import { IUser, User } from "../models/user";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { SECRET_KEY } from "../middleware/auth";
+import { SECRET_KEY, TokenRequest } from "../middleware/auth";
 import { UserRepository } from "../repositories/UserRepository";
 import { ResponseError } from "../utils/ResponseError";
+import { WineRepository } from "../repositories/WineRepository";
 
 export class UserController {
     private userRepository = new UserRepository();
@@ -34,14 +35,76 @@ export class UserController {
             });
          
             return res.json({
-                user: {
-                    id: foundUser._id,
-                    email: foundUser.email
-                },
+                id: foundUser._id,
+                email: foundUser.email,
                 token: token
             });
         } else {
             throw new ResponseError("Incorrect credentials");
+        }
+    }
+
+    getFavoriteWineState = async (req: TokenRequest, res: Response) => {
+        const wineId = req.params.wineId;
+        const userId = req.token._id.toString();
+
+        const result = await this.userRepository.getFavoriteWine(wineId, userId);
+        let isFavorite: boolean = false
+        if (result != null) {
+            isFavorite = true
+        }
+
+        return res.send(isFavorite);
+    }
+
+    changeFavoriteWineState = async (req: TokenRequest, res: Response) => {
+        const wineId = req.params.wineId;
+        const userId = req.token._id.toString();
+        const favorite: boolean = req.body.favorite;
+
+        const result = await this.userRepository.getFavoriteWine(wineId, userId)
+
+        if (favorite && !result) {
+            this.userRepository.changeFavoriteWineState(wineId, userId, true);
+            return res.send("Wine added to favorites");
+        }
+        else if (!favorite && result) {
+            this.userRepository.changeFavoriteWineState(wineId, userId, false, result.id);
+            return res.send("Wine removed from favorites");
+        } else {
+            throw new ResponseError("Error occured while performing favorite wine request");
+        }
+    }
+
+    getFollowedCatalogueState = async (req: TokenRequest, res: Response) => {
+        const catalogueId = req.params.catalogueId;
+        const userId = req.token._id.toString();
+
+        const result = await this.userRepository.getFollowedCatalogue(catalogueId, userId);
+        let isFollowed: boolean = false
+        if (result != null) {
+            isFollowed = true
+        }
+
+        return res.send(isFollowed);
+    }
+
+    changeFollowedCatalogueState = async (req: TokenRequest, res: Response) => {
+        const catalogueId = req.params.catalogueId;
+        const userId = req.token._id.toString();
+        const follow: boolean = req.body.follow;
+
+        const result = await this.userRepository.getFollowedCatalogue(catalogueId, userId)
+
+        if (follow && !result) {
+            this.userRepository.followCatalogue(catalogueId, userId);
+            return res.send("Catalogue is now followed");
+        }
+        else if (!follow && result) {
+            this.userRepository.unfollowCatalogue(result.id);
+            return res.send("Catalogue removed from followed");
+        } else {
+            throw new ResponseError("Error occured while performing follow catalogue request");
         }
     }
 }

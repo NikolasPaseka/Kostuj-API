@@ -7,20 +7,20 @@ function getCatalogueRouter(): Router {
     const router = Router();
     const catalogueController = new CatalogueController();
 
-    router.route('/')
+    router.route("/")
         .get(catchAsync(catalogueController.getCatalogues))
 
-    router.route('/:id')
+    router.route("/:id")
         .get(catchAsync(catalogueController.getCatalogueDetail))
 
-    router.route('/:id/samples')
+    router.route("/:id/samples")
         .get(catchAsync(catalogueController.getCatalogueSamples))
 
-    router.route('/:id/samples/countsByColor')
+    router.route("/:id/numbersOfSamples")
         .get(catchAsync(catalogueController.getSampleCountsByColor))
 
-    router.route('/:id/followCatalogue')
-        .post(auth, catchAsync(catalogueController.changeUserFollowState))
+    router.route("/samples/:id")
+        .get(catchAsync(catalogueController.getCatalogueSampleDetail))
 
     return router;
 }

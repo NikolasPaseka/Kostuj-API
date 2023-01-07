@@ -33,6 +33,7 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@faker-js/faker": "^7.6.0",
     "mocker-data-generator": "^2.12.0"
   }
 }
