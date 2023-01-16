@@ -7,11 +7,14 @@ function getWineRouter(): Router {
     const router = Router();
     const wineController = new WineController();
 
-    router.route('/')
+    router.route("/")
         .get(catchAsync(wineController.getWines))
 
-    router.route('/grapeVarietals')
+    router.route("/grapeVarietals")
         .get(catchAsync(wineController.getGrapeVarietals))
+
+    router.route("/:id")
+        .get(catchAsync(wineController.getWineDetail))
 
     return router;
 }

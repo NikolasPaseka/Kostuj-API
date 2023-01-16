@@ -19,6 +19,9 @@ function getCatalogueRouter(): Router {
     router.route("/:id/numbersOfSamples")
         .get(catchAsync(catalogueController.getSampleCountsByColor))
 
+    router.route("/:id/wineries")
+        .get(catchAsync(catalogueController.getParticipatedWineries))
+
     router.route("/samples/:id")
         .get(catchAsync(catalogueController.getCatalogueSampleDetail))
 

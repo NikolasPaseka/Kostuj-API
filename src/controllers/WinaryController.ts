@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IWinary, Winary } from "../models/winary";
+import { IWinary } from "../models/winary";
 import { WinaryRepository } from "../repositories/WinaryRepository";
 export class WinaryController {
     private winaryRepository = new WinaryRepository();
@@ -8,5 +8,12 @@ export class WinaryController {
         const winaries: IWinary[] = await this.winaryRepository.getWinaries();
 
         res.json(winaries);
+    }
+
+    getWineryDetail = async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const winery = await this.winaryRepository.getWineryDetail(id);
+
+        res.json(winery);
     }
 }

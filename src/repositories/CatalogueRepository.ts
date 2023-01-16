@@ -8,6 +8,10 @@ import { ResponseError } from "../utils/ResponseError";
 
 
 export class CatalogueRepository {
+    private onlyUnique(value: any, index: any, self: any) {
+        return self.indexOf(value) === index;
+      }
+
 
     async getCatalogues(){
         return await Catalogue.find({});
@@ -51,5 +55,20 @@ export class CatalogueRepository {
                 model: GrapeVarietal
             }]
         });
+    }
+
+    async getParticipatedWineries(catalogueId: string) {
+        // TODO CHANGE na particepated wineries entries
+        const samplesResult =  await Sample.find({ catalogueId: catalogueId });
+        console.log(samplesResult);
+        const wineIds: string[] = [];
+        samplesResult.map(x => { wineIds.push(x.wineId.toString()) });
+
+        const wineResults = await Wine.find().where("_id").in(wineIds);
+        let wineriesIds: string[] = [];
+        wineResults.map(x => { wineriesIds.push(x.winaryId.toString()) });
+
+        wineriesIds = wineriesIds.filter(this.onlyUnique);
+        return await Winary.find().where("_id").in(wineriesIds);
     }
 }

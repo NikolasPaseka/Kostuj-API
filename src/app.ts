@@ -25,7 +25,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use('/catalogues', getCatalogueRouter());
-app.use('/winaries', getWinaryRouter());
+app.use('/wineries', getWinaryRouter());
 app.use('/wines', getWineRouter());
 app.use('/users', getUserRouter());
 app.use("/mapLocations", getMapLocationRouter());

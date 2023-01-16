@@ -59,4 +59,11 @@ export class CatalogueController {
 
         res.json(countsObject);
     }
+
+    getParticipatedWineries = async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const wineries = await this.catalogueRepository.getParticipatedWineries(id);
+
+        res.json(wineries);
+    }
 }

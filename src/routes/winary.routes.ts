@@ -9,6 +9,9 @@ function getWinaryRouter(): Router {
     router.route('/')
         .get(catchAsync(winaryController.getWinaries))
 
+    router.route("/:id")
+        .get(catchAsync(winaryController.getWineryDetail))
+
     return router;
 }
 
