@@ -1,0 +1,346 @@
+[
+    {
+        "zkratka": "Ac",
+        "odrůda": "Acolon"
+    },
+    {
+        "zkratka": "Ag",
+        "odrůda": "Agni"
+    },
+    {
+        "zkratka": "Al",
+        "odrůda": "Alibernet"
+    },
+    {
+        "zkratka": "An",
+        "odrůda": "André"
+    },
+    {
+        "zkratka": "Ar",
+        "odrůda": "Ariana"
+    },
+    {
+        "zkratka": "Au",
+        "odrůda": "Aurelius"
+    },
+    {
+        "zkratka": "Ax",
+        "odrůda": "Auxerrois"
+    },
+    {
+        "zkratka": "Bi",
+        "odrůda": "Bianca"
+    },
+    {
+        "zkratka": "Bl",
+        "odrůda": "Blauburger"
+    },
+    {
+        "zkratka": "CC",
+        "odrůda": "Cabernet Cortis"
+    },
+    {
+        "zkratka": "CD",
+        "odrůda": "Cabernet Dorsa"
+    },
+    {
+        "zkratka": "CM",
+        "odrůda": "Cabernet Moravia"
+    },
+    {
+        "zkratka": "CS",
+        "odrůda": "Cabernet Sauvignon"
+    },
+    {
+        "zkratka": "Ce",
+        "odrůda": "Cerason"
+    },
+    {
+        "zkratka": "De",
+        "odrůda": "Děvín"
+    },
+    {
+        "zkratka": "Dr",
+        "odrůda": "Dornfelder"
+    },
+    {
+        "zkratka": "Er",
+        "odrůda": "Erilon"
+    },
+    {
+        "zkratka": "Fl",
+        "odrůda": "Florianka"
+    },
+    {
+        "zkratka": "Fr",
+        "odrůda": "Frankovka"
+    },
+    {
+        "zkratka": "Ftv",
+        "odrůda": "Fratava"
+    },
+    {
+        "zkratka": "Gwt",
+        "odrůda": "Gewürztraminer"
+    },
+    {
+        "zkratka": "Hi",
+        "odrůda": "Hibernal"
+    },
+    {
+        "zkratka": "He",
+        "odrůda": "Helios"
+    },
+    {
+        "zkratka": "Ch",
+        "odrůda": "Chardonnay"
+    },
+    {
+        "zkratka": "IO",
+        "odrůda": "Irsai Oliver"
+    },
+    {
+        "zkratka": "Jak",
+        "odrůda": "Jakubské"
+    },
+    {
+        "zkratka": "Ke",
+        "odrůda": "Kerner"
+    },
+    {
+        "zkratka": "Kof",
+        "odrůda": "Kofranka"
+    },
+    {
+        "zkratka": "La",
+        "odrůda": "Laurot"
+    },
+    {
+        "zkratka": "Le",
+        "odrůda": "Lena"
+    },
+    {
+        "zkratka": "Ma",
+        "odrůda": "Malverina"
+    },
+    {
+        "zkratka": "Med",
+        "odrůda": "Medea"
+    },
+    {
+        "zkratka": "Me",
+        "odrůda": "Merlot"
+    },
+    {
+        "zkratka": "Mr",
+        "odrůda": "Mery"
+    },
+    {
+        "zkratka": "MP",
+        "odrůda": "Modrý Portugal"
+    },
+    {
+        "zkratka": "MM",
+        "odrůda": "Muškát moravský"
+    },
+    {
+        "zkratka": "MO",
+        "odrůda": "Muškát Ottonel"
+    },
+    {
+        "zkratka": "MŽ",
+        "odrůda": "Muškát žlutý"
+    },
+    {
+        "zkratka": "MT",
+        "odrůda": "Müller Thurgau"
+    },
+    {
+        "zkratka": "Na",
+        "odrůda": "Nativa"
+    },
+    {
+        "zkratka": "Ne",
+        "odrůda": "Neronet"
+    },
+    {
+        "zkratka": "Ni",
+        "odrůda": "Nitra"
+    },
+    {
+        "zkratka": "Ng",
+        "odrůda": "Neuburské"
+    },
+    {
+        "zkratka": "No",
+        "odrůda": "Noah"
+    },
+    {
+        "zkratka": "Pa",
+        "odrůda": "Pálava"
+    },
+    {
+        "zkratka": "Re",
+        "odrůda": "Retsina"
+    },
+    {
+        "zkratka": "Reg",
+        "odrůda": "Regent"
+    },
+    {
+        "zkratka": "Ri",
+        "odrůda": "Rinot"
+    },
+    {
+        "zkratka": "Ru",
+        "odrůda": "Rubinet"
+    },
+    {
+        "zkratka": "RB",
+        "odrůda": "Rulandské bílé"
+    },
+    {
+        "zkratka": "RM",
+        "odrůda": "Rulandské modré"
+    },
+    {
+        "zkratka": "RŠ",
+        "odrůda": "Rulandské šedé"
+    },
+    {
+        "zkratka": "Rul",
+        "odrůda": "Rulenka"
+    },
+    {
+        "zkratka": "RR",
+        "odrůda": "Ryzlink rýnský"
+    },
+    {
+        "zkratka": "RV",
+        "odrůda": "Ryzlink vlašský"
+    },
+    {
+        "zkratka": "Sg",
+        "odrůda": "Sauvignon"
+    },
+    {
+        "zkratka": "SoG",
+        "odrůda": "Souvignier Gris"
+    },
+    {
+        "zkratka": "Svl",
+        "odrůda": "Savilon"
+    },
+    {
+        "zkratka": "Sev",
+        "odrůda": "Sevar"
+    },
+    {
+        "zkratka": "Sv",
+        "odrůda": "Svatovavřinecké"
+    },
+    {
+        "zkratka": "Svj",
+        "odrůda": "Svojsen"
+    },
+    {
+        "zkratka": "SZ",
+        "odrůda": "Sylvánské zelené"
+    },
+    {
+        "zkratka": "TČ",
+        "odrůda": "Tramín červený"
+    },
+    {
+        "zkratka": "Tr",
+        "odrůda": "Tristar"
+    },
+    {
+        "zkratka": "VČR",
+        "odrůda": "Veltlínské červené rané"
+    },
+    {
+        "zkratka": "VZ",
+        "odrůda": "Veltlínské zelené"
+    },
+    {
+        "zkratka": "Ve",
+        "odrůda": "Veritas"
+    },
+    {
+        "zkratka": "Ves",
+        "odrůda": "Vesna"
+    },
+    {
+        "zkratka": "Vra",
+        "odrůda": "Vranac"
+    },
+    {
+        "zkratka": "Vrb",
+        "odrůda": "Vrboska"
+    },
+    {
+        "zkratka": "Zw",
+        "odrůda": "Zweigeltrebe"
+    },
+    {
+        "zkratka": "Cher",
+        "odrůda": "Cherchegyi fürz"
+    },
+    {
+        "zkratka": "Chrup",
+        "odrůda": "Chrupka"
+    },
+    {
+        "zkratka": "MuMo",
+        "odrůda": "Muškát Morio"
+    },
+    {
+        "zkratka": "Musc",
+        "odrůda": "Muscaris"
+    },
+    {
+        "zkratka": "Prim",
+        "odrůda": "Prim"
+    },
+    {
+        "zkratka": "Sar",
+        "odrůda": "Saryvel"
+    },
+    {
+        "zkratka": "Sol",
+        "odrůda": "Solaris"
+    },
+    {
+        "zkratka": "Tra",
+        "odrůda": "Tramín"
+    },
+    {
+        "zkratka": "Ba",
+        "odrůda": "Bago"
+    },
+    {
+        "zkratka": "Cmit",
+        "odrůda": "Caberbet Mithos"
+    },
+    {
+        "zkratka": "Chor",
+        "odrůda": "Chorvát"
+    },
+    {
+        "zkratka": "Iz",
+        "odrůda": "Izabela"
+    },
+    {
+        "zkratka": "Mo",
+        "odrůda": "Moldova"
+    },
+    {
+        "zkratka": "MH",
+        "odrůda": "Muškát Hamburský"
+    },
+    {
+        "zkratka": "Joh",
+        "odrůda": "Johannitet"
+    }
+]
