@@ -1,6 +1,12 @@
 import express, { Express, Request, Response } from "express";
 import bodyParser from "body-parser";
 import { connect } from "./config/db.config";
+import { load } from 'ts-dotenv';
+
+const env = load({
+    PORT: Number,
+});
+
 
 import getWinaryRouter from "./routes/winary.routes";
 import getCatalogueRouter from "./routes/catalogue.routes";
@@ -36,7 +42,7 @@ app.all('*', (req, res) => {
 
 app.use(errorHandler);
 
-const port = process.env.PORT || 3000
+const port = env.PORT || 3000
 app.listen(port, () => {
     console.log('server is listening on port ' + port)
 });

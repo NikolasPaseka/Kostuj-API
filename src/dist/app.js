@@ -6,6 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const db_config_1 = require("./config/db.config");
+const ts_dotenv_1 = require("ts-dotenv");
+const env = (0, ts_dotenv_1.load)({
+    PORT: Number,
+});
 const winary_routes_1 = __importDefault(require("./routes/winary.routes"));
 const catalogue_routes_1 = __importDefault(require("./routes/catalogue.routes"));
 const user_routes_1 = __importDefault(require("./routes/user.routes"));
@@ -33,7 +37,7 @@ app.all('*', (req, res) => {
     res.send("not found");
 });
 app.use(errorHandler_1.errorHandler);
-const port = process.env.PORT || 3000;
+const port = env.PORT || 3000;
 app.listen(port, () => {
     console.log('server is listening on port ' + port);
 });
