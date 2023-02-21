@@ -26,7 +26,8 @@ const userSchema = new mongoose_1.Schema({
         required: true
     },
     firstName: { type: String, required: true },
-    lastName: { type: String, required: true }
+    lastName: { type: String, required: true },
+    avatarImageUrl: { type: String, required: false }
 });
 const saltRounds = 8;
 userSchema.pre("save", function (next) {

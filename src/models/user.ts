@@ -5,7 +5,8 @@ export interface IUser {
     email: string,
     password: string,
     firstName: string,
-    lastName: string
+    lastName: string,
+    avatarImageUrl: string
 }
 
 const userSchema = new Schema<IUser>({
@@ -19,7 +20,8 @@ const userSchema = new Schema<IUser>({
         required: true
     },
     firstName: { type: String, required: true },
-    lastName: { type: String, required: true }
+    lastName: { type: String, required: true },
+    avatarImageUrl: { type: String, required: false }
 });
 
 const saltRounds = 8;

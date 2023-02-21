@@ -16,7 +16,9 @@ class CatalogueController {
     constructor() {
         this.catalogueRepository = new CatalogueRepository_1.CatalogueRepository();
         this.getCatalogues = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const catalogues = yield this.catalogueRepository.getCatalogues();
+            const page = parseInt(req.query.page);
+            const limit = parseInt(req.query.limit);
+            const catalogues = yield this.catalogueRepository.getCatalogues(page, limit);
             res.json(catalogues);
         });
         this.getCatalogueDetail = (req, res) => __awaiter(this, void 0, void 0, function* () {

@@ -17,7 +17,8 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^7.1.2",
     "rimraf": "^3.0.2",
-    "ts-dotenv": "^0.9.0"
+    "ts-dotenv": "^0.9.0",
+    "typescript": "^4.9.4"
   },
   "name": "kostuj-api",
   "version": "1.0.0",

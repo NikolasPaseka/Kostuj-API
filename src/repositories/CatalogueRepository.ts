@@ -11,10 +11,14 @@ export class CatalogueRepository {
     private onlyUnique(value: any, index: any, self: any) {
         return self.indexOf(value) === index;
       }
+    
+    getAllCatalogues = async () => {
+        return await Catalogue.find();
+    }
 
-
-    async getCatalogues(){
-        return await Catalogue.find({});
+    getCatalogues = async (page: number, limit: number) => {
+        const startIndex = (page - 1) * limit;
+        return await Catalogue.find().limit(limit).skip(startIndex).exec();
     }
 
     async getCatalogueDetail(catalogueId: string) {

@@ -17,13 +17,17 @@ const winary_1 = require("../models/winary");
 const wine_1 = require("../models/wine");
 const ResponseError_1 = require("../utils/ResponseError");
 class CatalogueRepository {
+    constructor() {
+        this.getAllCatalogues = () => __awaiter(this, void 0, void 0, function* () {
+            return yield catalogue_1.Catalogue.find();
+        });
+        this.getCatalogues = (page, limit) => __awaiter(this, void 0, void 0, function* () {
+            const startIndex = (page - 1) * limit;
+            return yield catalogue_1.Catalogue.find().limit(limit).skip(startIndex).exec();
+        });
+    }
     onlyUnique(value, index, self) {
         return self.indexOf(value) === index;
-    }
-    getCatalogues() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield catalogue_1.Catalogue.find({});
-        });
     }
     getCatalogueDetail(catalogueId) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -26,10 +26,10 @@ function getRandomCoordinationInRange(from, to, fixed) {
     // .toFixed() returns string, so ' * 1' is a trick to convert to number
 }
 var sampleMock = {
-    title: { faker: "lorem.words(1)" },
+    title: { faker: "lorem.words(2)" },
     description: { faker: "lorem.sentences(5)" },
     year: { function: function () {
-            return Math.floor(Math.random() * (2023 - 2017) + 2017);
+            return Math.floor(Math.random() * (8 - 1) + 1);
         }
     },
     startDate: { function: function () {

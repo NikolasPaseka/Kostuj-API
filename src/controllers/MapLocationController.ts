@@ -28,7 +28,7 @@ export class MapLocationController {
     }
 
     getAllLocations = async (req: Request, res: Response) => {
-        const catalogues = await this.catalogueRepository.getCatalogues();
+        const catalogues = await this.catalogueRepository.getAllCatalogues();
         const winaries = await this.winaryRepository.getWinaries();
 
         const resultArray = [...this.getLocationWithTypes(catalogues, "feast"), ...this.getLocationWithTypes(winaries, "winery")];

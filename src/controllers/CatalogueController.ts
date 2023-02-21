@@ -13,7 +13,9 @@ export class CatalogueController {
     private catalogueRepository = new CatalogueRepository();
 
     getCatalogues = async (req: Request, res: Response) => {
-        const catalogues = await this.catalogueRepository.getCatalogues();
+        const page: number = parseInt(req.query.page as string);
+        const limit: number = parseInt(req.query.limit as string);
+        const catalogues = await this.catalogueRepository.getCatalogues(page, limit);
 
         res.json(catalogues);
     }

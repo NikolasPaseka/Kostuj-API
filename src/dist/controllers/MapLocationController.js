@@ -32,7 +32,7 @@ class MapLocationController {
             return locationObjects;
         };
         this.getAllLocations = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const catalogues = yield this.catalogueRepository.getCatalogues();
+            const catalogues = yield this.catalogueRepository.getAllCatalogues();
             const winaries = yield this.winaryRepository.getWinaries();
             const resultArray = [...this.getLocationWithTypes(catalogues, "feast"), ...this.getLocationWithTypes(winaries, "winery")];
             res.json(resultArray);
