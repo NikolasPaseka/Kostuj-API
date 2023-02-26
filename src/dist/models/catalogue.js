@@ -12,11 +12,8 @@ const catalogueSchema = new mongoose_1.Schema({
         latitude: { type: Number, required: true },
         longitude: { type: Number, required: true }
     },
-    imageUrl: String
+    imageUrl: String,
+    published: { type: Boolean, required: true, default: false },
+    locked: { type: Boolean, required: true, default: false }
 });
-// catalogueSchema.set('toJSON', {
-//     virtuals: true,
-//     versionKey: false,
-//     transform: function (doc, ret) { delete ret._id }
-// });
 exports.Catalogue = (0, mongoose_1.model)("Catalogue", catalogueSchema);

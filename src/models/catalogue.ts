@@ -10,7 +10,9 @@ export interface ICatalogue {
         latitude: number,
         longitude: number
     }
-    imageUrl?: string
+    imageUrl?: string,
+    published: boolean,
+    locked: boolean,
 }
 
 const catalogueSchema = new Schema<ICatalogue>({
@@ -23,12 +25,9 @@ const catalogueSchema = new Schema<ICatalogue>({
         latitude: { type: Number, required: true },
         longitude: { type: Number, required: true }
     },
-    imageUrl: String
+    imageUrl: String,
+    published: { type: Boolean, required: true, default: false },
+    locked: { type: Boolean, required: true, default: false }
 });
-// catalogueSchema.set('toJSON', {
-//     virtuals: true,
-//     versionKey: false,
-//     transform: function (doc, ret) { delete ret._id }
-// });
 
 export const Catalogue = model<ICatalogue>("Catalogue", catalogueSchema);
