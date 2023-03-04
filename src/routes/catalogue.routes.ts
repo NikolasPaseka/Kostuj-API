@@ -10,6 +10,9 @@ function getCatalogueRouter(): Router {
     router.route("/")
         .get(catchAsync(catalogueController.getCatalogues))
 
+    router.route("/search")
+        .get(catchAsync(catalogueController.getCatalogueBySearch))
+
     router.route("/:id")
         .get(catchAsync(catalogueController.getCatalogueDetail))
 
@@ -21,6 +24,7 @@ function getCatalogueRouter(): Router {
 
     router.route("/:id/wineries")
         .get(catchAsync(catalogueController.getParticipatedWineries))
+
 
     router.route("/samples/:id")
         .get(catchAsync(catalogueController.getCatalogueSampleDetail))

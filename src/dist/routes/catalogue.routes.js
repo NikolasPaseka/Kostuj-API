@@ -11,6 +11,8 @@ function getCatalogueRouter() {
     const catalogueController = new CatalogueController_1.CatalogueController();
     router.route("/")
         .get((0, catchAsync_1.default)(catalogueController.getCatalogues));
+    router.route("/search")
+        .get((0, catchAsync_1.default)(catalogueController.getCatalogueBySearch));
     router.route("/:id")
         .get((0, catchAsync_1.default)(catalogueController.getCatalogueDetail));
     router.route("/:id/samples")

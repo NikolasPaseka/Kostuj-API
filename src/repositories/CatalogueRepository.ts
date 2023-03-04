@@ -21,6 +21,10 @@ export class CatalogueRepository {
         return await Catalogue.find().limit(limit).skip(startIndex).exec();
     }
 
+    getCatalogueByTitle = async (title: string) => {
+        return await Catalogue.find({ title: { $regex: title, $options: "i" }});
+    }
+
     async getCatalogueDetail(catalogueId: string) {
         const catalogue = await Catalogue.findById(catalogueId);
         if (catalogue == null) {

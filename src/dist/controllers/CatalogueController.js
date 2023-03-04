@@ -21,6 +21,11 @@ class CatalogueController {
             const catalogues = yield this.catalogueRepository.getCatalogues(page, limit);
             res.json(catalogues);
         });
+        this.getCatalogueBySearch = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const title = req.query.title;
+            const catalogues = yield this.catalogueRepository.getCatalogueByTitle(title);
+            res.json(catalogues);
+        });
         this.getCatalogueDetail = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             const catalogue = yield this.catalogueRepository.getCatalogueDetail(id);

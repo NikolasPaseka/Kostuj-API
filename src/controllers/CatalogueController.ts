@@ -20,6 +20,13 @@ export class CatalogueController {
         res.json(catalogues);
     }
 
+    getCatalogueBySearch = async (req: Request, res: Response) => {
+        const title: string = req.query.title as string;
+        const catalogues = await this.catalogueRepository.getCatalogueByTitle(title);
+
+        res.json(catalogues);
+    }
+
     getCatalogueDetail = async (req: Request, res: Response) => {
         const { id } = req.params;
         const catalogue = await this.catalogueRepository.getCatalogueDetail(id);

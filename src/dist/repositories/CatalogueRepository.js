@@ -25,6 +25,9 @@ class CatalogueRepository {
             const startIndex = (page - 1) * limit;
             return yield catalogue_1.Catalogue.find().limit(limit).skip(startIndex).exec();
         });
+        this.getCatalogueByTitle = (title) => __awaiter(this, void 0, void 0, function* () {
+            return yield catalogue_1.Catalogue.find({ title: { $regex: title, $options: "i" } });
+        });
     }
     onlyUnique(value, index, self) {
         return self.indexOf(value) === index;
