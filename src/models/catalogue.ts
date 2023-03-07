@@ -10,7 +10,7 @@ export interface ICatalogue {
         latitude: number,
         longitude: number
     }
-    imageUrl?: string,
+    imageUrl?: string[],
     published: boolean,
     locked: boolean,
 }
@@ -25,7 +25,7 @@ const catalogueSchema = new Schema<ICatalogue>({
         latitude: { type: Number, required: true },
         longitude: { type: Number, required: true }
     },
-    imageUrl: String,
+    imageUrl: [{ type: String, required: false }],
     published: { type: Boolean, required: true, default: false },
     locked: { type: Boolean, required: true, default: false }
 });

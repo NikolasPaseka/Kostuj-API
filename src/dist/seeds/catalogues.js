@@ -18,18 +18,21 @@ const mocker_data_generator_1 = __importDefault(require("mocker-data-generator")
 const catalogue_1 = require("../models/catalogue");
 const sample_1 = require("../models/sample");
 const samples_1 = __importDefault(require("./samples"));
-const followedCatalogues_1 = require("../models/followedCatalogues");
-const favoriteWine_1 = require("../models/favoriteWine");
-const FavoriteWinery_1 = require("../models/FavoriteWinery");
+const CommissionMember_1 = require("../models/CommissionMember");
+const RatedSample_1 = require("../models/RatedSample");
+const user_1 = require("../models/user");
 function getRandomCoordinationInRange(from, to, fixed) {
     return parseFloat((Math.random() * (to - from) + from).toFixed(fixed)) * 1;
     // .toFixed() returns string, so ' * 1' is a trick to convert to number
+}
+function getRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
 }
 var sampleMock = {
     title: { faker: "lorem.words(2)" },
     description: { faker: "lorem.sentences(5)" },
     year: { function: function () {
-            return Math.floor(Math.random() * (8 - 1) + 1);
+            return getRandomNumber(1, 8);
         }
     },
     startDate: { function: function () {
@@ -45,7 +48,11 @@ var sampleMock = {
             } }
     },
     imageUrl: { function: function () {
-            return faker_1.faker.image.imageUrl(1234, 2345, "wine", true);
+            const images = [];
+            for (let i = 0; i < getRandomNumber(2, 5); i++) {
+                images.push(faker_1.faker.image.imageUrl(1234, 2345, "wine", true));
+            }
+            return images;
         } }
 };
 var data = (0, mocker_data_generator_1.default)()
@@ -54,14 +61,14 @@ var data = (0, mocker_data_generator_1.default)()
 mongoose_1.default.connect('mongodb+srv://passy:4R842dj2TqpKUVL8@mockeddb.weax9sr.mongodb.net/?retryWrites=true&w=majority')
     .then(() => __awaiter(void 0, void 0, void 0, function* () {
     console.log('mongo connection open');
-    // transformSchemasToClient();
-    yield followedCatalogues_1.FollowedCatalogue.collection.drop();
-    yield favoriteWine_1.FavoriteWine.collection.drop();
-    yield FavoriteWinery_1.FavoriteWinery.collection.drop();
+    //transformSchemasToClient();
     yield catalogue_1.Catalogue.collection.drop();
     yield seedData();
     yield sample_1.Sample.collection.drop();
     yield (0, samples_1.default)();
+    yield CommissionMember_1.CommissionMember.collection.drop();
+    yield RatedSample_1.RatedSample.collection.drop();
+    yield seedCommission();
 }))
     .catch((err) => {
     console.log(`err: ${err}`);
@@ -79,5 +86,28 @@ function seedData() {
         }
         console.log("done");
         //mongoose.connection.close()
+    });
+}
+function seedCommission() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const users = yield user_1.User.find({});
+        const catalogues = yield catalogue_1.Catalogue.find({});
+        for (const user of users) {
+            const numberToSeed = getRandomNumber(1, 3);
+            for (let i = 0; i < numberToSeed; i++) {
+                const randomCatalogue = catalogues[Math.floor(Math.random() * catalogues.length)];
+                try {
+                    const commissionMember = new CommissionMember_1.CommissionMember({
+                        catalogueId: randomCatalogue.id,
+                        userId: user.id
+                    });
+                    yield commissionMember.save();
+                }
+                catch (err) {
+                    console.log(err);
+                }
+            }
+        }
+        console.log("commission seeded");
     });
 }

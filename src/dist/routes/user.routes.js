@@ -18,24 +18,16 @@ function getUserRouter() {
         .post((0, catchAsync_1.default)(userController.register));
     router.route("/favoriteWines")
         .get(auth_1.auth, (0, catchAsync_1.default)(userController.getFavoriteWines));
-    router.route("/followedCatalogues")
-        .get(auth_1.auth, (0, catchAsync_1.default)(userController.getFollowedCatalogues));
-    router.route("/favoriteWineries")
-        .get(auth_1.auth, (0, catchAsync_1.default)(userController.getFavoriteWineries));
+    router.route("/commissionCatalogues")
+        .get(auth_1.auth, (0, catchAsync_1.default)(userController.getCommissionCatalogues));
     router.route("/:id")
         .get(auth_1.auth, (0, catchAsync_1.default)(userController.getUserById));
+    router.route("/commissionCatalogues/ratedSamples/:catalogueId")
+        .get(auth_1.auth, (0, catchAsync_1.default)(userController.getRatedSamples));
     router.route("/favoriteWine/:wineId")
         .get(auth_1.auth, (0, catchAsync_1.default)(userController.getFavoriteWineState))
         .post(auth_1.auth, (0, catchAsync_1.default)(userController.changeFavoriteWineState))
         .put(auth_1.auth, (0, catchAsync_1.default)(userController.updateFavoriteWineNotes));
-    router.route("/followedCatalogue/upcoming")
-        .get(auth_1.auth, (0, catchAsync_1.default)(userController.getUpcomingCatalogueEvent));
-    router.route("/followedCatalogue/:catalogueId")
-        .get(auth_1.auth, (0, catchAsync_1.default)(userController.getFollowedCatalogueState))
-        .post(auth_1.auth, (0, catchAsync_1.default)(userController.changeFollowedCatalogueState));
-    router.route("/favoriteWinery/:wineryId")
-        .get(auth_1.auth, (0, catchAsync_1.default)(userController.getFavoriteWineryState))
-        .post(auth_1.auth, (0, catchAsync_1.default)(userController.changeFavoriteWineryState));
     return router;
 }
 exports.default = getUserRouter;

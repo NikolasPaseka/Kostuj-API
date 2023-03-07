@@ -14,10 +14,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const catalogue_1 = require("../models/catalogue");
+const RatedSample_1 = require("../models/RatedSample");
 mongoose_1.default.connect('mongodb+srv://passy:4R842dj2TqpKUVL8@mockeddb.weax9sr.mongodb.net/?retryWrites=true&w=majority')
     .then(() => __awaiter(void 0, void 0, void 0, function* () {
     console.log('mongo connection open');
-    yield editCatalogues();
+    //await editCatalogues();
+    const ratedSample = new RatedSample_1.RatedSample({
+        sampleId: "6407356bdb3d9a0c9f431280",
+        commissionMemberId: "63c51ea82a3d2698643a323f",
+        rating: 18
+    });
+    yield ratedSample.save();
     console.log("done");
 }))
     .catch((err) => {

@@ -6,9 +6,11 @@ import { SECRET_KEY, TokenRequest } from "../middleware/auth";
 import { UserRepository } from "../repositories/UserRepository";
 import { ResponseError } from "../utils/ResponseError";
 import { WineRepository } from "../repositories/WineRepository";
+import { CatalogueRepository } from "../repositories/CatalogueRepository";
 
 export class UserController {
     private userRepository = new UserRepository();
+    private catalogueRepository = new CatalogueRepository();
 
     getUsers = async (req: Request, res: Response) => {
         const users: IUser[] = await this.userRepository.getUsers();
@@ -50,6 +52,35 @@ export class UserController {
         } else {
             throw new ResponseError("Incorrect credentials");
         }
+    }
+
+    getCommissionCatalogues = async (req: TokenRequest, res: Response) => {
+        const userId = req.token._id.toString();
+        const commissionCatalogues = await this.userRepository.getCommissionCatalogues(userId);
+        
+        const result: {}[] = [];
+        for (const catalogue of commissionCatalogues) {
+            const ratedSamples = await this.userRepository.getRatedSamples(userId, catalogue.id);
+            const samples = await this.catalogueRepository.getCatalogueSamples(catalogue.id)
+            result.push({ 
+                id: catalogue.id,
+                title: catalogue.title,
+                startDate: catalogue.startDate,
+                imageUrl: catalogue.imageUrl,
+                numberOfRated: ratedSamples.length,
+                numberOfSamples: samples.length
+            });
+        }
+        return res.json(result);
+    }
+
+    getRatedSamples = async (req: TokenRequest, res: Response) => {
+        const userId = req.token._id.toString();
+        const catalogueId = req.params.catalogueId;
+        
+        const ratedSamples = await this.userRepository.getRatedSamples(userId, catalogueId);
+
+        return res.json(ratedSamples);
     }
 
     getFavoriteWineState = async (req: TokenRequest, res: Response) => {
@@ -103,90 +134,5 @@ export class UserController {
         
         await this.userRepository.updateFavoriteWineNotes(wineId, userId, notes);
         return res.send("Notes have been succesfully saved");
-    }
-
-    getFollowedCatalogues = async (req: TokenRequest, res: Response) => {
-        const userId = req.token._id.toString();
-        const followedCatalogues = await this.userRepository.getFollowedCatalogues(userId);
-
-        return res.json(followedCatalogues);
-    }
-
-    getFavoriteWineries = async (req: TokenRequest, res: Response) => {
-        const userId = req.token._id.toString();
-        const favoriteWineries = await this.userRepository.getFavoriteWineries(userId);
-
-        return res.json(favoriteWineries);
-    }
-
-    getFollowedCatalogueState = async (req: TokenRequest, res: Response) => {
-        const catalogueId = req.params.catalogueId;
-        const userId = req.token._id.toString();
-
-        const result = await this.userRepository.getFollowedCatalogue(catalogueId, userId);
-        let isFollowed: boolean = false
-        if (result != null) {
-            isFollowed = true
-        }
-
-        return res.send(isFollowed);
-    }
-
-    changeFollowedCatalogueState = async (req: TokenRequest, res: Response) => {
-        const catalogueId = req.params.catalogueId;
-        const userId = req.token._id.toString();
-        const follow: boolean = req.body.follow;
-
-        const result = await this.userRepository.getFollowedCatalogue(catalogueId, userId)
-
-        if (follow && !result) {
-            this.userRepository.followCatalogue(catalogueId, userId);
-            return res.send("Catalogue is now followed");
-        }
-        else if (!follow && result) {
-            this.userRepository.unfollowCatalogue(result.id);
-            return res.send("Catalogue removed from followed");
-        } else {
-            throw new ResponseError("Error occured while performing follow catalogue request");
-        }
-    }
-
-    changeFavoriteWineryState = async (req: TokenRequest, res: Response) => {
-        const wineryId = req.params.wineryId;
-        const userId = req.token._id.toString();
-        const favorite: boolean = req.body.favorite;
-
-        const result = await this.userRepository.getFavoriteWinery(wineryId, userId)
-
-        if (favorite && !result) {
-            this.userRepository.changeFavoriteWineryState(wineryId, userId, true);
-            return res.send("Winery added to favorites");
-        }
-        else if (!favorite && result) {
-            this.userRepository.changeFavoriteWineryState(wineryId, userId, false, result.id);
-            return res.send("Winery removed from favorites");
-        } else {
-            throw new ResponseError("Error occured while performing favorite winery request");
-        }
-    }
-
-    getFavoriteWineryState = async (req: TokenRequest, res: Response) => {
-        const wineryId = req.params.wineryId;
-        const userId = req.token._id.toString();
-
-        const result = await this.userRepository.getFavoriteWinery(wineryId, userId);
-        let isFavorite: boolean = false
-        if (result != null) {
-            isFavorite = true
-        }
-
-        return res.send(isFavorite);
-    }
-
-    getUpcomingCatalogueEvent = async (req: TokenRequest, res: Response) => {
-        const userId = req.token._id.toString();
-        const result = await this.userRepository.getUpcomingCatalogueEvent(userId);
-
-        return res.json(result);
     }
 }

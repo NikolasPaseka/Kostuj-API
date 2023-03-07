@@ -18,9 +18,11 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const auth_1 = require("../middleware/auth");
 const UserRepository_1 = require("../repositories/UserRepository");
 const ResponseError_1 = require("../utils/ResponseError");
+const CatalogueRepository_1 = require("../repositories/CatalogueRepository");
 class UserController {
     constructor() {
         this.userRepository = new UserRepository_1.UserRepository();
+        this.catalogueRepository = new CatalogueRepository_1.CatalogueRepository();
         this.getUsers = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const users = yield this.userRepository.getUsers();
             res.json(users);
@@ -54,6 +56,30 @@ class UserController {
             else {
                 throw new ResponseError_1.ResponseError("Incorrect credentials");
             }
+        });
+        this.getCommissionCatalogues = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const userId = req.token._id.toString();
+            const commissionCatalogues = yield this.userRepository.getCommissionCatalogues(userId);
+            const result = [];
+            for (const catalogue of commissionCatalogues) {
+                const ratedSamples = yield this.userRepository.getRatedSamples(userId, catalogue.id);
+                const samples = yield this.catalogueRepository.getCatalogueSamples(catalogue.id);
+                result.push({
+                    id: catalogue.id,
+                    title: catalogue.title,
+                    startDate: catalogue.startDate,
+                    imageUrl: catalogue.imageUrl,
+                    numberOfRated: ratedSamples.length,
+                    numberOfSamples: samples.length
+                });
+            }
+            return res.json(result);
+        });
+        this.getRatedSamples = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const userId = req.token._id.toString();
+            const catalogueId = req.params.catalogueId;
+            const ratedSamples = yield this.userRepository.getRatedSamples(userId, catalogueId);
+            return res.json(ratedSamples);
         });
         this.getFavoriteWineState = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const wineId = req.params.wineId;
@@ -98,75 +124,6 @@ class UserController {
             const notes = req.body.notes;
             yield this.userRepository.updateFavoriteWineNotes(wineId, userId, notes);
             return res.send("Notes have been succesfully saved");
-        });
-        this.getFollowedCatalogues = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const userId = req.token._id.toString();
-            const followedCatalogues = yield this.userRepository.getFollowedCatalogues(userId);
-            return res.json(followedCatalogues);
-        });
-        this.getFavoriteWineries = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const userId = req.token._id.toString();
-            const favoriteWineries = yield this.userRepository.getFavoriteWineries(userId);
-            return res.json(favoriteWineries);
-        });
-        this.getFollowedCatalogueState = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const catalogueId = req.params.catalogueId;
-            const userId = req.token._id.toString();
-            const result = yield this.userRepository.getFollowedCatalogue(catalogueId, userId);
-            let isFollowed = false;
-            if (result != null) {
-                isFollowed = true;
-            }
-            return res.send(isFollowed);
-        });
-        this.changeFollowedCatalogueState = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const catalogueId = req.params.catalogueId;
-            const userId = req.token._id.toString();
-            const follow = req.body.follow;
-            const result = yield this.userRepository.getFollowedCatalogue(catalogueId, userId);
-            if (follow && !result) {
-                this.userRepository.followCatalogue(catalogueId, userId);
-                return res.send("Catalogue is now followed");
-            }
-            else if (!follow && result) {
-                this.userRepository.unfollowCatalogue(result.id);
-                return res.send("Catalogue removed from followed");
-            }
-            else {
-                throw new ResponseError_1.ResponseError("Error occured while performing follow catalogue request");
-            }
-        });
-        this.changeFavoriteWineryState = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const wineryId = req.params.wineryId;
-            const userId = req.token._id.toString();
-            const favorite = req.body.favorite;
-            const result = yield this.userRepository.getFavoriteWinery(wineryId, userId);
-            if (favorite && !result) {
-                this.userRepository.changeFavoriteWineryState(wineryId, userId, true);
-                return res.send("Winery added to favorites");
-            }
-            else if (!favorite && result) {
-                this.userRepository.changeFavoriteWineryState(wineryId, userId, false, result.id);
-                return res.send("Winery removed from favorites");
-            }
-            else {
-                throw new ResponseError_1.ResponseError("Error occured while performing favorite winery request");
-            }
-        });
-        this.getFavoriteWineryState = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const wineryId = req.params.wineryId;
-            const userId = req.token._id.toString();
-            const result = yield this.userRepository.getFavoriteWinery(wineryId, userId);
-            let isFavorite = false;
-            if (result != null) {
-                isFavorite = true;
-            }
-            return res.send(isFavorite);
-        });
-        this.getUpcomingCatalogueEvent = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const userId = req.token._id.toString();
-            const result = yield this.userRepository.getUpcomingCatalogueEvent(userId);
-            return res.json(result);
         });
     }
 }

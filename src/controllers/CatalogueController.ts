@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { TokenRequest } from "../middleware/auth";
 import { Catalogue } from "../models/catalogue";
-import { FollowedCatalogue } from "../models/followedCatalogues";
 import { Sample } from "../models/sample";
 import { IWine, Wine } from "../models/wine";
 

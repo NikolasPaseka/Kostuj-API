@@ -11,15 +11,36 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
 const catalogue_1 = require("../models/catalogue");
+const CommissionMember_1 = require("../models/CommissionMember");
 const favoriteWine_1 = require("../models/favoriteWine");
-const FavoriteWinery_1 = require("../models/FavoriteWinery");
-const followedCatalogues_1 = require("../models/followedCatalogues");
 const GrapeVarietal_1 = require("../models/GrapeVarietal");
+const RatedSample_1 = require("../models/RatedSample");
+const sample_1 = require("../models/sample");
 const user_1 = require("../models/user");
 const winary_1 = require("../models/winary");
 const wine_1 = require("../models/wine");
 const ResponseError_1 = require("../utils/ResponseError");
 class UserRepository {
+    constructor() {
+        this.getCommissionCatalogues = (userId) => __awaiter(this, void 0, void 0, function* () {
+            const commissionCatalogues = yield CommissionMember_1.CommissionMember.find({ userId }).select("catalogueId");
+            const ids = [];
+            commissionCatalogues.map((element) => { ids.push(element.catalogueId.toString()); });
+            return yield catalogue_1.Catalogue.find({ published: false }).where("_id").in(ids).exec();
+        });
+        this.getRatedSamples = (userId, catalogueId) => __awaiter(this, void 0, void 0, function* () {
+            return yield RatedSample_1.RatedSample
+                .find({
+                commissionMemberId: userId
+            })
+                .populate({
+                path: "sampleId",
+                model: sample_1.Sample,
+                match: { catalogueId }
+            })
+                .exec();
+        });
+    }
     getUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield user_1.User.find({});
@@ -55,6 +76,7 @@ class UserRepository {
             yield user.save();
         });
     }
+    // TODO - change to tasted wine sample
     getFavoriteWine(wineId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield favoriteWine_1.FavoriteWine.findOne({ wineId, userId });
@@ -91,69 +113,6 @@ class UserRepository {
                     path: "grapeVarietals",
                     model: GrapeVarietal_1.GrapeVarietal
                 }]).exec();
-        });
-    }
-    getFollowedCatalogue(catalogueId, userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield followedCatalogues_1.FollowedCatalogue.findOne({ catalogueId, userId });
-        });
-    }
-    getFollowedCatalogues(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const followed = yield followedCatalogues_1.FollowedCatalogue.find({ userId }).select("catalogueId");
-            const ids = [];
-            followed.map((element) => { ids.push(element.catalogueId.toString()); });
-            return yield catalogue_1.Catalogue.find().where("_id").in(ids).exec();
-        });
-    }
-    followCatalogue(catalogueId, userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const followedCatalogue = new followedCatalogues_1.FollowedCatalogue({ catalogueId: catalogueId, userId: userId });
-            yield followedCatalogue.save();
-        });
-    }
-    unfollowCatalogue(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield followedCatalogues_1.FollowedCatalogue.findOneAndDelete({ _id: id });
-        });
-    }
-    getFavoriteWinery(wineryId, userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield FavoriteWinery_1.FavoriteWinery.findOne({ wineryId, userId });
-        });
-    }
-    changeFavoriteWineryState(wineryId, userId, favorite, id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (favorite) {
-                const favoriteWinery = new FavoriteWinery_1.FavoriteWinery({ wineryId: wineryId, userId: userId });
-                yield favoriteWinery.save();
-            }
-            else if (id != null) {
-                yield FavoriteWinery_1.FavoriteWinery.findOneAndDelete({ _id: id });
-            }
-            else {
-                throw new ResponseError_1.ResponseError("Something went wrong");
-            }
-        });
-    }
-    getFavoriteWineries(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const favorites = yield FavoriteWinery_1.FavoriteWinery.find({ userId }).select("wineryId");
-            const ids = [];
-            favorites.map((element) => { ids.push(element.wineryId.toString()); });
-            return yield winary_1.Winary.find().where("_id").in(ids).exec();
-        });
-    }
-    getUpcomingCatalogueEvent(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const followed = yield followedCatalogues_1.FollowedCatalogue.find().sort({ startDate: "desc" }).exec();
-            const ids = [];
-            followed.map((element) => { ids.push(element.catalogueId.toString()); });
-            const upcoming = yield catalogue_1.Catalogue.find().where("_id").in(ids).sort({ startDate: "asc" });
-            if (upcoming.length > 0) {
-                return upcoming[0];
-            }
-            return null;
         });
     }
 }

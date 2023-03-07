@@ -12,7 +12,7 @@ const catalogueSchema = new mongoose_1.Schema({
         latitude: { type: Number, required: true },
         longitude: { type: Number, required: true }
     },
-    imageUrl: String,
+    imageUrl: [{ type: String, required: false }],
     published: { type: Boolean, required: true, default: false },
     locked: { type: Boolean, required: true, default: false }
 });

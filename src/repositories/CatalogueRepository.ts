@@ -1,5 +1,4 @@
 import { Catalogue, ICatalogue } from "../models/catalogue";
-import { FollowedCatalogue } from "../models/followedCatalogues";
 import { GrapeVarietal } from "../models/GrapeVarietal";
 import { Sample } from "../models/sample";
 import { Winary } from "../models/winary";
