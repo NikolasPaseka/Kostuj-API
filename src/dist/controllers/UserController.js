@@ -78,8 +78,31 @@ class UserController {
         this.getRatedSamples = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const userId = req.token._id.toString();
             const catalogueId = req.params.catalogueId;
+            const result = [];
             const ratedSamples = yield this.userRepository.getRatedSamples(userId, catalogueId);
-            return res.json(ratedSamples);
+            for (const ratedSample of ratedSamples) {
+                result.push({
+                    id: ratedSample.id,
+                    commissionMemberId: ratedSample.commissionMemberId,
+                    sampleId: ratedSample.sampleId,
+                    rating: ratedSample.rating
+                });
+            }
+            return res.json(result);
+        });
+        this.addRatedSample = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const userId = req.token._id.toString();
+            const sampleId = req.body.sampleId;
+            const rating = req.body.rating;
+            const ratedSample = yield this.userRepository.addRatedSample(userId, sampleId, rating, false);
+            res.json(ratedSample);
+        });
+        this.updateRatedSample = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const userId = req.token._id.toString();
+            const sampleId = req.body.sampleId;
+            const rating = req.body.rating;
+            const ratedSample = yield this.userRepository.addRatedSample(userId, sampleId, rating, true);
+            res.json(ratedSample);
         });
         this.getFavoriteWineState = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const wineId = req.params.wineId;

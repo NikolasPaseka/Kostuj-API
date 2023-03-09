@@ -29,6 +29,8 @@ function getUserRouter(): Router {
 
     router.route("/commissionCatalogues/ratedSamples/:catalogueId")
         .get(auth, catchAsync(userController.getRatedSamples))
+        .post(auth, catchAsync(userController.addRatedSample))
+        .put(auth, catchAsync(userController.updateRatedSample))
 
     router.route("/favoriteWine/:wineId")
         .get(auth, catchAsync(userController.getFavoriteWineState))

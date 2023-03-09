@@ -23,7 +23,9 @@ function getUserRouter() {
     router.route("/:id")
         .get(auth_1.auth, (0, catchAsync_1.default)(userController.getUserById));
     router.route("/commissionCatalogues/ratedSamples/:catalogueId")
-        .get(auth_1.auth, (0, catchAsync_1.default)(userController.getRatedSamples));
+        .get(auth_1.auth, (0, catchAsync_1.default)(userController.getRatedSamples))
+        .post(auth_1.auth, (0, catchAsync_1.default)(userController.addRatedSample))
+        .put(auth_1.auth, (0, catchAsync_1.default)(userController.updateRatedSample));
     router.route("/favoriteWine/:wineId")
         .get(auth_1.auth, (0, catchAsync_1.default)(userController.getFavoriteWineState))
         .post(auth_1.auth, (0, catchAsync_1.default)(userController.changeFavoriteWineState))

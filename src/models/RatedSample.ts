@@ -1,6 +1,6 @@
 import { Schema, model, connect } from "mongoose";
 
-export interface IRatedSample {
+export interface IRatedSample extends Document {
     commissionMemberId: Schema.Types.ObjectId,
     sampleId: Schema.Types.ObjectId,
     rating: number

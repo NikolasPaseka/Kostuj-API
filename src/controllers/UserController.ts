@@ -78,9 +78,36 @@ export class UserController {
         const userId = req.token._id.toString();
         const catalogueId = req.params.catalogueId;
         
+        const result: {}[] = [];
         const ratedSamples = await this.userRepository.getRatedSamples(userId, catalogueId);
+        for (const ratedSample of ratedSamples) {
+            result.push({
+                id: ratedSample.id,
+                commissionMemberId: ratedSample.commissionMemberId,
+                sampleId: ratedSample.sampleId,
+                rating: ratedSample.rating
+            })
+        }
 
-        return res.json(ratedSamples);
+        return res.json(result);
+    }
+
+    addRatedSample = async (req: TokenRequest, res: Response) => {
+        const userId = req.token._id.toString();
+        const sampleId: string = req.body.sampleId;
+        const rating: number = req.body.rating;
+
+        const ratedSample = await this.userRepository.addRatedSample(userId, sampleId, rating, false);
+        res.json(ratedSample);
+    }
+
+    updateRatedSample = async (req: TokenRequest, res: Response) => {
+        const userId = req.token._id.toString();
+        const sampleId: string = req.body.sampleId;
+        const rating: number = req.body.rating;
+
+        const ratedSample = await this.userRepository.addRatedSample(userId, sampleId, rating, true);
+        res.json(ratedSample);
     }
 
     getFavoriteWineState = async (req: TokenRequest, res: Response) => {

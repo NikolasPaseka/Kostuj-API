@@ -3,7 +3,7 @@ import { CommissionMember } from "../models/CommissionMember";
 import { FavoriteWine } from "../models/favoriteWine";
 import { GrapeVarietal } from "../models/GrapeVarietal";
 import { IRatedSample, RatedSample } from "../models/RatedSample";
-import { Sample } from "../models/sample";
+import { ISample, Sample } from "../models/sample";
 import { IUser, User } from "../models/user";
 import { Winary } from "../models/winary";
 import { Wine } from "../models/wine";
@@ -52,7 +52,7 @@ export class UserRepository {
     }
 
     getRatedSamples = async (userId: string, catalogueId: string) => {
-        return await RatedSample
+        const filteredResult = await RatedSample
             .find({
                 commissionMemberId: userId
             })
@@ -62,7 +62,35 @@ export class UserRepository {
                 match: { catalogueId }
             })
             .exec();
+    
+        return await RatedSample.find({
+            "_id": { $in: filteredResult.map(val => { return val.id })}
+        }).exec();
     }
+
+    addRatedSample = async (commissionMemberId: string, sampleId: string, rating: number, update: boolean) => {
+        const existedRatedSample = await RatedSample.findOne({ commissionMemberId, sampleId });
+
+        if (update && existedRatedSample == null) {
+            throw new ResponseError("Sample has not been rated yet");
+        } else if (!update && existedRatedSample != null) {
+            throw new ResponseError("Sample already rated by this commission member");
+        }
+
+        if (update) {
+            const updatedSample = await RatedSample.findOneAndUpdate({
+                commissionMemberId, sampleId
+            },{
+                rating
+            }, {new: true})
+            return (updatedSample);
+        }
+
+        const ratedSample = new RatedSample({ commissionMemberId, sampleId, rating });
+        await ratedSample.save();
+        return ratedSample;
+    }
+
 
     // TODO - change to tasted wine sample
     async getFavoriteWine(wineId: string, userId: string) {

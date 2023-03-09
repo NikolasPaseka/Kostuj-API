@@ -29,7 +29,7 @@ class UserRepository {
             return yield catalogue_1.Catalogue.find({ published: false }).where("_id").in(ids).exec();
         });
         this.getRatedSamples = (userId, catalogueId) => __awaiter(this, void 0, void 0, function* () {
-            return yield RatedSample_1.RatedSample
+            const filteredResult = yield RatedSample_1.RatedSample
                 .find({
                 commissionMemberId: userId
             })
@@ -39,6 +39,29 @@ class UserRepository {
                 match: { catalogueId }
             })
                 .exec();
+            return yield RatedSample_1.RatedSample.find({
+                "_id": { $in: filteredResult.map(val => { return val.id; }) }
+            }).exec();
+        });
+        this.addRatedSample = (commissionMemberId, sampleId, rating, update) => __awaiter(this, void 0, void 0, function* () {
+            const existedRatedSample = yield RatedSample_1.RatedSample.findOne({ commissionMemberId, sampleId });
+            if (update && existedRatedSample == null) {
+                throw new ResponseError_1.ResponseError("Sample has not been rated yet");
+            }
+            else if (!update && existedRatedSample != null) {
+                throw new ResponseError_1.ResponseError("Sample already rated by this commission member");
+            }
+            if (update) {
+                const updatedSample = yield RatedSample_1.RatedSample.findOneAndUpdate({
+                    commissionMemberId, sampleId
+                }, {
+                    rating
+                }, { new: true });
+                return (updatedSample);
+            }
+            const ratedSample = new RatedSample_1.RatedSample({ commissionMemberId, sampleId, rating });
+            yield ratedSample.save();
+            return ratedSample;
         });
     }
     getUsers() {
