@@ -26,11 +26,14 @@ function getUserRouter(): Router {
     router.route("/:id")
         .get(auth, catchAsync(userController.getUserById))
 
-
     router.route("/commissionCatalogues/ratedSamples/:catalogueId")
         .get(auth, catchAsync(userController.getRatedSamples))
         .post(auth, catchAsync(userController.addRatedSample))
         .put(auth, catchAsync(userController.updateRatedSample))
+
+    router.route("/tastedSamples/:catalogueId")
+        .get(auth, catchAsync(userController.getTastedSamples))
+        .post(auth, catchAsync(userController.updateTastedSamples))
 
     router.route("/favoriteWine/:wineId")
         .get(auth, catchAsync(userController.getFavoriteWineState))

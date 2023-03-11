@@ -1,9 +1,11 @@
+import Long from "long";
 import { Catalogue } from "../models/catalogue";
 import { CommissionMember } from "../models/CommissionMember";
 import { FavoriteWine } from "../models/favoriteWine";
 import { GrapeVarietal } from "../models/GrapeVarietal";
 import { IRatedSample, RatedSample } from "../models/RatedSample";
 import { ISample, Sample } from "../models/sample";
+import { ITastedSample, TastedSample } from "../models/TastedSample";
 import { IUser, User } from "../models/user";
 import { Winary } from "../models/winary";
 import { Wine } from "../models/wine";
@@ -91,6 +93,59 @@ export class UserRepository {
         return ratedSample;
     }
 
+
+    async getTastedSamples(catalogueId: string, userId: string) {
+        const filteredResult = await TastedSample.find({
+            userId
+        }).populate({
+            path: "sampleId",
+            model: Sample,
+            match: { catalogueId }
+        }).exec()
+
+        return await TastedSample.find({
+            "_id": { $in: filteredResult.map(val => { return val.id })}
+        }).exec();
+        // const tastedSamplesJson = tastedSamples.map((document) => {
+        //     const docJson = document.toJSON()
+        //     const timestamp: Long = Long.fromNumber(document.modifiedAt.getTime());
+        //     docJson.modifiedAt = timestamp
+        // })
+    }
+
+    
+    async updateTastedSamples(tastedSamples: ITastedSample[], userId: string) {
+        for (const tastedSample of tastedSamples) {
+            const foundResult = await TastedSample.findOne({
+                sampleId: tastedSample.sampleId,
+                userId: userId
+            }).exec();
+
+            if (foundResult != null) {
+                // update tasted wine
+                const test = await TastedSample.findOneAndUpdate({
+                    sampleId: tastedSample.sampleId,
+                    userId: userId,
+                    modifiedAt: { $lt: tastedSample.modifiedAt }
+                }, {
+                    rating: tastedSample.rating,
+                    note: tastedSample.note
+                }).exec()
+                console.log(test)
+            } else {
+                // Add tasted wine to database
+                const newTasted = new TastedSample({
+                    sampleId: tastedSample.sampleId,
+                    userId: userId,
+                    rating: tastedSample.rating,
+                    note: tastedSample.note,
+                    modifiedAt: tastedSample.modifiedAt
+                });
+                await newTasted.save();
+                console.log("adding")
+            }
+        }
+    }
 
     // TODO - change to tasted wine sample
     async getFavoriteWine(wineId: string, userId: string) {

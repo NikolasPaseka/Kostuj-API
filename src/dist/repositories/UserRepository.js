@@ -16,6 +16,7 @@ const favoriteWine_1 = require("../models/favoriteWine");
 const GrapeVarietal_1 = require("../models/GrapeVarietal");
 const RatedSample_1 = require("../models/RatedSample");
 const sample_1 = require("../models/sample");
+const TastedSample_1 = require("../models/TastedSample");
 const user_1 = require("../models/user");
 const winary_1 = require("../models/winary");
 const wine_1 = require("../models/wine");
@@ -97,6 +98,59 @@ class UserRepository {
             }
             const user = new user_1.User(userData);
             yield user.save();
+        });
+    }
+    getTastedSamples(catalogueId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const filteredResult = yield TastedSample_1.TastedSample.find({
+                userId
+            }).populate({
+                path: "sampleId",
+                model: sample_1.Sample,
+                match: { catalogueId }
+            }).exec();
+            return yield TastedSample_1.TastedSample.find({
+                "_id": { $in: filteredResult.map(val => { return val.id; }) }
+            }).exec();
+            // const tastedSamplesJson = tastedSamples.map((document) => {
+            //     const docJson = document.toJSON()
+            //     const timestamp: Long = Long.fromNumber(document.modifiedAt.getTime());
+            //     docJson.modifiedAt = timestamp
+            // })
+        });
+    }
+    updateTastedSamples(tastedSamples, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            for (const tastedSample of tastedSamples) {
+                const foundResult = yield TastedSample_1.TastedSample.findOne({
+                    sampleId: tastedSample.sampleId,
+                    userId: userId
+                }).exec();
+                if (foundResult != null) {
+                    // update tasted wine
+                    const test = yield TastedSample_1.TastedSample.findOneAndUpdate({
+                        sampleId: tastedSample.sampleId,
+                        userId: userId,
+                        modifiedAt: { $lt: tastedSample.modifiedAt }
+                    }, {
+                        rating: tastedSample.rating,
+                        note: tastedSample.note
+                    }).exec();
+                    console.log(test);
+                }
+                else {
+                    // Add tasted wine to database
+                    const newTasted = new TastedSample_1.TastedSample({
+                        sampleId: tastedSample.sampleId,
+                        userId: userId,
+                        rating: tastedSample.rating,
+                        note: tastedSample.note,
+                        modifiedAt: tastedSample.modifiedAt
+                    });
+                    yield newTasted.save();
+                    console.log("adding");
+                }
+            }
         });
     }
     // TODO - change to tasted wine sample

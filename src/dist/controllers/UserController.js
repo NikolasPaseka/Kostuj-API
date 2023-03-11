@@ -104,6 +104,18 @@ class UserController {
             const ratedSample = yield this.userRepository.addRatedSample(userId, sampleId, rating, true);
             res.json(ratedSample);
         });
+        this.getTastedSamples = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const userId = req.token._id.toString();
+            const catalogueId = req.params.catalogueId;
+            const tastedSamples = yield this.userRepository.getTastedSamples(catalogueId, userId);
+            res.json(tastedSamples);
+        });
+        this.updateTastedSamples = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const userId = req.token._id.toString();
+            const tastedSamples = req.body;
+            yield this.userRepository.updateTastedSamples(tastedSamples, userId);
+            res.json("Successfuly updated");
+        });
         this.getFavoriteWineState = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const wineId = req.params.wineId;
             const userId = req.token._id.toString();

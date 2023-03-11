@@ -7,6 +7,7 @@ import { UserRepository } from "../repositories/UserRepository";
 import { ResponseError } from "../utils/ResponseError";
 import { WineRepository } from "../repositories/WineRepository";
 import { CatalogueRepository } from "../repositories/CatalogueRepository";
+import { ITastedSample } from "../models/TastedSample";
 
 export class UserController {
     private userRepository = new UserRepository();
@@ -108,6 +109,22 @@ export class UserController {
 
         const ratedSample = await this.userRepository.addRatedSample(userId, sampleId, rating, true);
         res.json(ratedSample);
+    }
+
+    getTastedSamples = async (req: TokenRequest, res: Response) => {
+        const userId = req.token._id.toString();
+        const catalogueId = req.params.catalogueId;
+
+        const tastedSamples = await this.userRepository.getTastedSamples(catalogueId, userId);
+        res.json(tastedSamples);
+    }
+
+    updateTastedSamples = async (req: TokenRequest, res: Response) => {
+        const userId = req.token._id.toString();
+        const tastedSamples: ITastedSample[] = req.body;
+
+        await this.userRepository.updateTastedSamples(tastedSamples, userId);
+        res.json("Successfuly updated");
     }
 
     getFavoriteWineState = async (req: TokenRequest, res: Response) => {
