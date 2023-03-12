@@ -127,6 +127,14 @@ export class UserController {
         res.json("Successfuly updated");
     }
 
+    deleteTastedSamples = async (req: TokenRequest, res: Response) => {
+        const userId = req.token._id.toString();
+        const tastedSamples: ITastedSample[] = req.body;
+
+        await this.userRepository.deleteTastedSamples(tastedSamples, userId);
+        res.json("Successfuly deleted");
+    }
+
     getFavoriteWineState = async (req: TokenRequest, res: Response) => {
         const wineId = req.params.wineId;
         const userId = req.token._id.toString();

@@ -34,6 +34,7 @@ function getUserRouter(): Router {
     router.route("/tastedSamples/:catalogueId")
         .get(auth, catchAsync(userController.getTastedSamples))
         .post(auth, catchAsync(userController.updateTastedSamples))
+        .delete(auth, catchAsync(userController.deleteTastedSamples))
 
     router.route("/favoriteWine/:wineId")
         .get(auth, catchAsync(userController.getFavoriteWineState))

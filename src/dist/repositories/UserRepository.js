@@ -112,11 +112,6 @@ class UserRepository {
             return yield TastedSample_1.TastedSample.find({
                 "_id": { $in: filteredResult.map(val => { return val.id; }) }
             }).exec();
-            // const tastedSamplesJson = tastedSamples.map((document) => {
-            //     const docJson = document.toJSON()
-            //     const timestamp: Long = Long.fromNumber(document.modifiedAt.getTime());
-            //     docJson.modifiedAt = timestamp
-            // })
         });
     }
     updateTastedSamples(tastedSamples, userId) {
@@ -128,15 +123,15 @@ class UserRepository {
                 }).exec();
                 if (foundResult != null) {
                     // update tasted wine
-                    const test = yield TastedSample_1.TastedSample.findOneAndUpdate({
+                    yield TastedSample_1.TastedSample.findOneAndUpdate({
                         sampleId: tastedSample.sampleId,
                         userId: userId,
                         modifiedAt: { $lt: tastedSample.modifiedAt }
                     }, {
                         rating: tastedSample.rating,
-                        note: tastedSample.note
+                        note: tastedSample.note,
+                        modifiedAt: tastedSample.modifiedAt
                     }).exec();
-                    console.log(test);
                 }
                 else {
                     // Add tasted wine to database
@@ -148,9 +143,16 @@ class UserRepository {
                         modifiedAt: tastedSample.modifiedAt
                     });
                     yield newTasted.save();
-                    console.log("adding");
                 }
             }
+        });
+    }
+    deleteTastedSamples(tastedSamples, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield TastedSample_1.TastedSample.deleteMany({
+                sampleId: { $in: tastedSamples.map(val => { return val.sampleId; }) },
+                userId: userId
+            });
         });
     }
     // TODO - change to tasted wine sample

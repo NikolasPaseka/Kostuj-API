@@ -116,6 +116,12 @@ class UserController {
             yield this.userRepository.updateTastedSamples(tastedSamples, userId);
             res.json("Successfuly updated");
         });
+        this.deleteTastedSamples = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const userId = req.token._id.toString();
+            const tastedSamples = req.body;
+            yield this.userRepository.deleteTastedSamples(tastedSamples, userId);
+            res.json("Successfuly deleted");
+        });
         this.getFavoriteWineState = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const wineId = req.params.wineId;
             const userId = req.token._id.toString();

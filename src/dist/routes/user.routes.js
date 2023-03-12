@@ -28,7 +28,8 @@ function getUserRouter() {
         .put(auth_1.auth, (0, catchAsync_1.default)(userController.updateRatedSample));
     router.route("/tastedSamples/:catalogueId")
         .get(auth_1.auth, (0, catchAsync_1.default)(userController.getTastedSamples))
-        .post(auth_1.auth, (0, catchAsync_1.default)(userController.updateTastedSamples));
+        .post(auth_1.auth, (0, catchAsync_1.default)(userController.updateTastedSamples))
+        .delete(auth_1.auth, (0, catchAsync_1.default)(userController.deleteTastedSamples));
     router.route("/favoriteWine/:wineId")
         .get(auth_1.auth, (0, catchAsync_1.default)(userController.getFavoriteWineState))
         .post(auth_1.auth, (0, catchAsync_1.default)(userController.changeFavoriteWineState))

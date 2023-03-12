@@ -106,11 +106,6 @@ export class UserRepository {
         return await TastedSample.find({
             "_id": { $in: filteredResult.map(val => { return val.id })}
         }).exec();
-        // const tastedSamplesJson = tastedSamples.map((document) => {
-        //     const docJson = document.toJSON()
-        //     const timestamp: Long = Long.fromNumber(document.modifiedAt.getTime());
-        //     docJson.modifiedAt = timestamp
-        // })
     }
 
     
@@ -123,15 +118,15 @@ export class UserRepository {
 
             if (foundResult != null) {
                 // update tasted wine
-                const test = await TastedSample.findOneAndUpdate({
+                await TastedSample.findOneAndUpdate({
                     sampleId: tastedSample.sampleId,
                     userId: userId,
                     modifiedAt: { $lt: tastedSample.modifiedAt }
                 }, {
                     rating: tastedSample.rating,
-                    note: tastedSample.note
+                    note: tastedSample.note,
+                    modifiedAt: tastedSample.modifiedAt
                 }).exec()
-                console.log(test)
             } else {
                 // Add tasted wine to database
                 const newTasted = new TastedSample({
@@ -142,9 +137,15 @@ export class UserRepository {
                     modifiedAt: tastedSample.modifiedAt
                 });
                 await newTasted.save();
-                console.log("adding")
             }
         }
+    }
+
+    async deleteTastedSamples(tastedSamples: ITastedSample[], userId: string) {
+        await TastedSample.deleteMany({
+            sampleId: { $in: tastedSamples.map(val => { return val.sampleId }) },
+            userId: userId
+        })
     }
 
     // TODO - change to tasted wine sample
