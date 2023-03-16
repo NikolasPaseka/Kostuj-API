@@ -17,6 +17,8 @@ export class MapLocationController {
             object["locationType"] = locationType;
             if (object["title"] != null) {
                 object["name"] = object["title"];
+                object["imageUrl"] = object["imageUrl"][0];
+
                 delete object["title"];
             }
             delete object["_id"];
