@@ -10,14 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CatalogueController = void 0;
-const wine_1 = require("../models/wine");
 const CatalogueRepository_1 = require("../repositories/CatalogueRepository");
+const ResponseError_1 = require("../utils/ResponseError");
 class CatalogueController {
     constructor() {
         this.catalogueRepository = new CatalogueRepository_1.CatalogueRepository();
         this.getCatalogues = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const page = parseInt(req.query.page);
-            const limit = parseInt(req.query.limit);
+            let page = parseInt(req.query.page);
+            let limit = parseInt(req.query.limit);
+            if (Number.isNaN(page) || Number.isNaN(limit)) {
+                throw new ResponseError_1.ResponseError("Invalid page or limit query");
+            }
             const catalogues = yield this.catalogueRepository.getCatalogues(page, limit);
             res.json(catalogues);
         });
@@ -40,24 +43,6 @@ class CatalogueController {
             const { id } = req.params;
             const sample = yield this.catalogueRepository.getCatalogueSampleDetail(id);
             res.json(sample);
-        });
-        this.getSampleCountsByColor = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            var _a;
-            const { id } = req.params;
-            const samples = yield this.catalogueRepository.getCatalogueSamples(id);
-            let countsMap = new Map([
-                ["red", 0],
-                ["white", 0],
-                ["rose", 0]
-            ]);
-            for (const sample of samples) {
-                if (sample.wineId instanceof wine_1.Wine) {
-                    const color = sample.wineId.color;
-                    countsMap.set(color, ((_a = countsMap.get(color)) !== null && _a !== void 0 ? _a : 0) + 1);
-                }
-            }
-            const countsObject = Object.fromEntries(countsMap);
-            res.json(countsObject);
         });
         this.getParticipatedWineries = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;

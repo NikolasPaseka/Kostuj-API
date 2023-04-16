@@ -35,7 +35,6 @@ class UserController {
         this.register = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const user = req.body;
             yield this.userRepository.createUser(user);
-            //res.send("Successfully registered");
             return yield this.login(req, res);
         });
         this.login = (req, res) => __awaiter(this, void 0, void 0, function* () {
@@ -44,9 +43,7 @@ class UserController {
             const foundUser = yield this.userRepository.getUserByEmail(email);
             const isMatch = bcrypt_1.default.compareSync(password, foundUser.password);
             if (isMatch) {
-                const token = jsonwebtoken_1.default.sign({ _id: (_a = foundUser._id) === null || _a === void 0 ? void 0 : _a.toString(), email: foundUser.email }, auth_1.SECRET_KEY, {
-                    expiresIn: '15 days',
-                });
+                const token = jsonwebtoken_1.default.sign({ _id: (_a = foundUser._id) === null || _a === void 0 ? void 0 : _a.toString(), email: foundUser.email }, auth_1.SECRET_KEY, {});
                 return res.json({
                     id: foundUser._id,
                     email: foundUser.email,

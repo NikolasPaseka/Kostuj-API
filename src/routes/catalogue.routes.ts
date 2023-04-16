@@ -1,35 +1,27 @@
 import { Router } from "express";
 import { CatalogueController } from "../controllers/CatalogueController";
 import catchAsync from "../utils/catchAsync";
-import { auth } from "../middleware/auth";
 
-function getCatalogueRouter(): Router {
-    const router = Router();
-    const catalogueController = new CatalogueController();
+const catalogueRouter = Router();
+const catalogueController = new CatalogueController();
 
-    router.route("/")
-        .get(catchAsync(catalogueController.getCatalogues))
+catalogueRouter.route("/")
+    .get(catchAsync(catalogueController.getCatalogues))
 
-    router.route("/search")
-        .get(catchAsync(catalogueController.getCatalogueBySearch))
+catalogueRouter.route("/search")
+    .get(catchAsync(catalogueController.getCatalogueBySearch))
 
-    router.route("/:id")
-        .get(catchAsync(catalogueController.getCatalogueDetail))
+catalogueRouter.route("/:id")
+    .get(catchAsync(catalogueController.getCatalogueDetail))
 
-    router.route("/:id/samples")
-        .get(catchAsync(catalogueController.getCatalogueSamples))
+catalogueRouter.route("/:id/samples")
+    .get(catchAsync(catalogueController.getCatalogueSamples))
 
-    router.route("/:id/numbersOfSamples")
-        .get(catchAsync(catalogueController.getSampleCountsByColor))
+catalogueRouter.route("/:id/wineries")
+    .get(catchAsync(catalogueController.getParticipatedWineries))
 
-    router.route("/:id/wineries")
-        .get(catchAsync(catalogueController.getParticipatedWineries))
+catalogueRouter.route("/samples/:id")
+    .get(catchAsync(catalogueController.getCatalogueSampleDetail))
 
 
-    router.route("/samples/:id")
-        .get(catchAsync(catalogueController.getCatalogueSampleDetail))
-
-    return router;
-}
-
-export default getCatalogueRouter;
+export default catalogueRouter;

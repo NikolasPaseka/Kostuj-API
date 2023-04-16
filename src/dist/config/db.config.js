@@ -40,7 +40,6 @@ const env = (0, ts_dotenv_1.load)({
 });
 let connection;
 const connect = () => {
-    //const url = "mongodb://localhost:27017/kostuj";
     const url = env.ATLAS_DB_URL;
     if (connection) {
         return;

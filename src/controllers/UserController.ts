@@ -5,7 +5,6 @@ import jwt from "jsonwebtoken";
 import { SECRET_KEY, TokenRequest } from "../middleware/auth";
 import { UserRepository } from "../repositories/UserRepository";
 import { ResponseError } from "../utils/ResponseError";
-import { WineRepository } from "../repositories/WineRepository";
 import { CatalogueRepository } from "../repositories/CatalogueRepository";
 import { ITastedSample } from "../models/TastedSample";
 
@@ -30,7 +29,7 @@ export class UserController {
         const user = req.body;
 
         await this.userRepository.createUser(user);
-        //res.send("Successfully registered");
+
         return await this.login(req, res);
     }
 
@@ -41,10 +40,7 @@ export class UserController {
         const isMatch = bcrypt.compareSync(password, foundUser.password);
     
         if (isMatch) {
-            const token = jwt.sign({ _id: foundUser._id?.toString(), email: foundUser.email }, SECRET_KEY, {
-                expiresIn: '15 days',
-            });
-         
+            const token = jwt.sign({ _id: foundUser._id?.toString(), email: foundUser.email }, SECRET_KEY, {});
             return res.json({
                 id: foundUser._id,
                 email: foundUser.email,

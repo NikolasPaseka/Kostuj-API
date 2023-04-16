@@ -3,9 +3,11 @@ import { ResponseError } from "../utils/ResponseError"
 
 export const errorHandler: ErrorRequestHandler = (err: ResponseError, req: Request, res: Response, next: NextFunction) => {
     console.log( `error ${err.message}`);
+    next();
     const statusCode = err.statusCode || 400;
     
-    res.statusMessage = err.message;
     res.statusCode = statusCode;
-    res.end();
-  }
+    res.json({
+      "error": err.message
+    })
+}

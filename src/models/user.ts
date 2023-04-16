@@ -1,5 +1,6 @@
 import { Schema, model, connect } from "mongoose";
 import bcrypt from "bcrypt";
+import { saltRounds } from "../utils/constants";
 
 export interface IUser {
     email: string,
@@ -15,16 +16,12 @@ const userSchema = new Schema<IUser>({
         required: true,
         unique: true
     },
-    password: {
-        type: String,
-        required: true
-    },
+    password: { type: String, required: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     avatarImageUrl: { type: String, required: false }
 });
 
-const saltRounds = 8;
 userSchema.pre("save", async function (next) {
     const user = this;
     if (user.isModified("password")) {

@@ -1,5 +1,4 @@
 import mongoose, * as Mongoose from "mongoose";
-import { strict as assert } from 'assert';
 import { load } from 'ts-dotenv';
 
 const env = load({
@@ -9,12 +8,9 @@ const env = load({
 let connection: Mongoose.Connection;
 
 export const connect = () => {
-    //const url = "mongodb://localhost:27017/kostuj";
     const url = env.ATLAS_DB_URL;
 
-    if (connection) {
-        return;
-    }
+    if (connection) { return; }
 
     Mongoose.connect(url)
     .then(() => {

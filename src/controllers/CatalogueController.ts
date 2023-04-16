@@ -1,8 +1,4 @@
 import { Request, Response } from "express";
-import { TokenRequest } from "../middleware/auth";
-import { Catalogue } from "../models/catalogue";
-import { Sample } from "../models/sample";
-import { IWine, Wine } from "../models/wine";
 
 import { CatalogueRepository } from "../repositories/CatalogueRepository";
 import { ResponseError } from "../utils/ResponseError";
@@ -12,8 +8,12 @@ export class CatalogueController {
     private catalogueRepository = new CatalogueRepository();
 
     getCatalogues = async (req: Request, res: Response) => {
-        const page: number = parseInt(req.query.page as string);
-        const limit: number = parseInt(req.query.limit as string);
+        let page: number = parseInt(req.query.page as string);
+        let limit: number = parseInt(req.query.limit as string);
+        if (Number.isNaN(page) || Number.isNaN(limit)) {
+            throw new ResponseError("Invalid page or limit query");
+        }
+
         const catalogues = await this.catalogueRepository.getCatalogues(page, limit);
 
         res.json(catalogues);
@@ -45,27 +45,6 @@ export class CatalogueController {
         const sample = await this.catalogueRepository.getCatalogueSampleDetail(id);
 
         res.json(sample);
-    }
-
-    getSampleCountsByColor = async (req: Request, res: Response) => {
-        const { id } = req.params;
-        const samples = await this.catalogueRepository.getCatalogueSamples(id);
-        
-        let countsMap = new Map<string, number>([
-            ["red", 0],
-            ["white", 0],
-            ["rose", 0]
-        ]);
-
-        for (const sample of samples) {
-            if (sample.wineId instanceof Wine) {
-                const color = sample.wineId.color;
-                countsMap.set(color, (countsMap.get(color) ?? 0) + 1);
-            }
-        }
-        const countsObject = Object.fromEntries(countsMap);
-
-        res.json(countsObject);
     }
 
     getParticipatedWineries = async (req: Request, res: Response) => {

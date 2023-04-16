@@ -2,18 +2,19 @@ import express, { Express, Request, Response } from "express";
 import bodyParser from "body-parser";
 import { connect } from "./config/db.config";
 import { load } from 'ts-dotenv';
+import { errorHandler } from "./middleware/errorHandler";
+import swaggerUi from 'swagger-ui-express'
+import * as swaggerDocument from './swagger.json'
+
+import wineryRouter from "./routes/winary.routes";
+import userRouter from "./routes/user.routes";
+import mapLocationRouter from "./routes/mapLocation.routes";
+import catalogueRouter from "./routes/catalogue.routes";
+import wineRouter from "./routes/wines.routes";
 
 const env = load({
     PORT: Number,
 });
-
-
-import getWinaryRouter from "./routes/winary.routes";
-import getCatalogueRouter from "./routes/catalogue.routes";
-import getUserRouter from "./routes/user.routes";
-import { errorHandler } from "./middleware/errorHandler";
-import getMapLocationRouter from "./routes/mapLocation.routes";
-import getWineRouter from "./routes/wines.routes";
 
 // connect to databse
 connect();
@@ -27,14 +28,16 @@ app.use(bodyParser.json());
 
 // routes
 app.get('/', (req: Request, res: Response) => {
-    res.send("hello from typescript + express!!!")
+    res.send("Kostuj API")
 });
 
-app.use('/catalogues', getCatalogueRouter());
-app.use('/wineries', getWinaryRouter());
-app.use('/wines', getWineRouter());
-app.use('/users', getUserRouter());
-app.use("/mapLocations", getMapLocationRouter());
+app.use('/catalogues', catalogueRouter);
+app.use('/wineries', wineryRouter);
+app.use('/wines', wineRouter);
+app.use('/users', userRouter);
+app.use("/mapLocations", mapLocationRouter);
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));     
 
 app.all('*', (req, res) => {
     res.send("not found");

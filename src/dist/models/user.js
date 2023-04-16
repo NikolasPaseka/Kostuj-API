@@ -15,26 +15,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const mongoose_1 = require("mongoose");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const constants_1 = require("../utils/constants");
 const userSchema = new mongoose_1.Schema({
     email: {
         type: String,
         required: true,
         unique: true
     },
-    password: {
-        type: String,
-        required: true
-    },
+    password: { type: String, required: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     avatarImageUrl: { type: String, required: false }
 });
-const saltRounds = 8;
 userSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = this;
         if (user.isModified("password")) {
-            user.password = yield bcrypt_1.default.hash(user.password, saltRounds);
+            user.password = yield bcrypt_1.default.hash(user.password, constants_1.saltRounds);
         }
         next();
     });

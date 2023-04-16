@@ -3,20 +3,16 @@ import { WinaryController } from "../controllers/WinaryController";
 import { WineController } from "../controllers/WineController";
 import catchAsync from "../utils/catchAsync";
 
-function getWineRouter(): Router {
-    const router = Router();
-    const wineController = new WineController();
+const wineRouter = Router();
+const wineController = new WineController();
 
-    router.route("/")
-        .get(catchAsync(wineController.getWines))
+wineRouter.route("/")
+    .get(catchAsync(wineController.getWines))
 
-    router.route("/grapeVarietals")
-        .get(catchAsync(wineController.getGrapeVarietals))
+wineRouter.route("/grapeVarietals")
+    .get(catchAsync(wineController.getGrapeVarietals))
 
-    router.route("/:id")
-        .get(catchAsync(wineController.getWineDetail))
+wineRouter.route("/:id")
+    .get(catchAsync(wineController.getWineDetail))
 
-    return router;
-}
-
-export default getWineRouter;
+export default wineRouter;
