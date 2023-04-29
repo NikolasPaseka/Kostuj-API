@@ -119,50 +119,6 @@ class UserController {
             yield this.userRepository.deleteTastedSamples(tastedSamples, userId);
             res.json("Successfuly deleted");
         });
-        this.getFavoriteWineState = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const wineId = req.params.wineId;
-            const userId = req.token._id.toString();
-            const result = yield this.userRepository.getFavoriteWine(wineId, userId);
-            let isFavorite = false;
-            let notes = "";
-            if (result != null) {
-                isFavorite = true;
-                notes = result.notes;
-            }
-            return res.json({
-                favorite: isFavorite,
-                notes: notes
-            });
-        });
-        this.changeFavoriteWineState = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const wineId = req.params.wineId;
-            const userId = req.token._id.toString();
-            const favorite = req.body.favorite;
-            const result = yield this.userRepository.getFavoriteWine(wineId, userId);
-            if (favorite && !result) {
-                this.userRepository.changeFavoriteWineState(wineId, userId, true);
-                return res.send("Wine added to favorites");
-            }
-            else if (!favorite && result) {
-                this.userRepository.changeFavoriteWineState(wineId, userId, false, result.id);
-                return res.send("Wine removed from favorites");
-            }
-            else {
-                throw new ResponseError_1.ResponseError("Error occured while performing favorite wine request");
-            }
-        });
-        this.getFavoriteWines = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const userId = req.token._id.toString();
-            const favoriteWines = yield this.userRepository.getFavoriteWines(userId);
-            return res.json(favoriteWines);
-        });
-        this.updateFavoriteWineNotes = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const wineId = req.params.wineId;
-            const userId = req.token._id.toString();
-            const notes = req.body.notes;
-            yield this.userRepository.updateFavoriteWineNotes(wineId, userId, notes);
-            return res.send("Notes have been succesfully saved");
-        });
     }
 }
 exports.UserController = UserController;

@@ -12,14 +12,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
 const catalogue_1 = require("../models/catalogue");
 const CommissionMember_1 = require("../models/CommissionMember");
-const favoriteWine_1 = require("../models/favoriteWine");
-const GrapeVarietal_1 = require("../models/GrapeVarietal");
 const RatedSample_1 = require("../models/RatedSample");
 const sample_1 = require("../models/sample");
 const TastedSample_1 = require("../models/TastedSample");
 const user_1 = require("../models/user");
-const winary_1 = require("../models/winary");
-const wine_1 = require("../models/wine");
 const ResponseError_1 = require("../utils/ResponseError");
 class UserRepository {
     constructor() {
@@ -74,7 +70,7 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             const user = yield user_1.User.findOne({ email });
             if (user == null) {
-                throw new ResponseError_1.ResponseError("User with this email does not exist", 404);
+                throw new ResponseError_1.ResponseError("Incorrect credentials", 400);
             }
             return user;
         });
@@ -153,45 +149,6 @@ class UserRepository {
                 sampleId: { $in: tastedSamples.map(val => { return val.sampleId; }) },
                 userId: userId
             });
-        });
-    }
-    // TODO - change to tasted wine sample
-    getFavoriteWine(wineId, userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield favoriteWine_1.FavoriteWine.findOne({ wineId, userId });
-        });
-    }
-    changeFavoriteWineState(wineId, userId, favorite, id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (favorite) {
-                const favoriteWine = new favoriteWine_1.FavoriteWine({ wineId: wineId, userId: userId });
-                yield favoriteWine.save();
-            }
-            else if (id != null) {
-                yield favoriteWine_1.FavoriteWine.findOneAndDelete({ _id: id });
-            }
-            else {
-                throw new ResponseError_1.ResponseError("Something went wrong");
-            }
-        });
-    }
-    updateFavoriteWineNotes(wineId, userId, notes) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield favoriteWine_1.FavoriteWine.updateOne({ wineId, userId }, { $set: { notes: notes } });
-        });
-    }
-    getFavoriteWines(userId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const favorites = yield favoriteWine_1.FavoriteWine.find({ userId }).select("wineId");
-            const ids = [];
-            favorites.map((element) => { ids.push(element.wineId.toString()); });
-            return yield wine_1.Wine.find().where("_id").in(ids).populate([{
-                    path: "winaryId",
-                    model: winary_1.Winary
-                }, {
-                    path: "grapeVarietals",
-                    model: GrapeVarietal_1.GrapeVarietal
-                }]).exec();
         });
     }
 }
