@@ -18,8 +18,8 @@ const mocker_data_generator_1 = __importDefault(require("mocker-data-generator")
 const catalogue_1 = require("../models/catalogue");
 const sample_1 = require("../models/sample");
 const samples_1 = __importDefault(require("./samples"));
-const CommissionMember_1 = require("../models/CommissionMember");
-const RatedSample_1 = require("../models/RatedSample");
+const commissionMember_1 = require("../models/commissionMember");
+const ratedSample_1 = require("../models/ratedSample");
 const user_1 = require("../models/user");
 function getRandomCoordinationInRange(from, to, fixed) {
     return parseFloat((Math.random() * (to - from) + from).toFixed(fixed)) * 1;
@@ -66,8 +66,8 @@ mongoose_1.default.connect('mongodb+srv://passy:4R842dj2TqpKUVL8@mockeddb.weax9s
     yield seedData();
     yield sample_1.Sample.collection.drop();
     yield (0, samples_1.default)();
-    yield CommissionMember_1.CommissionMember.collection.drop();
-    yield RatedSample_1.RatedSample.collection.drop();
+    yield commissionMember_1.CommissionMember.collection.drop();
+    yield ratedSample_1.RatedSample.collection.drop();
     yield seedCommission();
 }))
     .catch((err) => {
@@ -97,7 +97,7 @@ function seedCommission() {
             for (let i = 0; i < numberToSeed; i++) {
                 const randomCatalogue = catalogues[Math.floor(Math.random() * catalogues.length)];
                 try {
-                    const commissionMember = new CommissionMember_1.CommissionMember({
+                    const commissionMember = new commissionMember_1.CommissionMember({
                         catalogueId: randomCatalogue.id,
                         userId: user.id
                     });

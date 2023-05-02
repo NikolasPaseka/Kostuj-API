@@ -9,8 +9,6 @@ const catchAsync_1 = __importDefault(require("../utils/catchAsync"));
 const auth_1 = require("../middleware/auth");
 const userRouter = (0, express_1.Router)();
 const userController = new UserController_1.UserController();
-userRouter.route("/")
-    .get((0, catchAsync_1.default)(userController.getUsers));
 userRouter.route("/login")
     .post((0, catchAsync_1.default)(userController.login));
 userRouter.route("/register")

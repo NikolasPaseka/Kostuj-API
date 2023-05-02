@@ -7,9 +7,6 @@ import { auth } from "../middleware/auth";
 const userRouter = Router();
 const userController = new UserController();
 
-userRouter.route("/")
-    .get(catchAsync(userController.getUsers))
-
 userRouter.route("/login")
     .post(catchAsync(userController.login))
 

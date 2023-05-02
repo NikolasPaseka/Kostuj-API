@@ -30,7 +30,6 @@ app.use(bodyParser.json());
 app.get('/', (req: Request, res: Response) => {
     res.send("Kostuj API")
 });
-
 app.use('/catalogues', catalogueRouter);
 app.use('/wineries', wineryRouter);
 app.use('/wines', wineRouter);

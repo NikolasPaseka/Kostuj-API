@@ -11,22 +11,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserRepository = void 0;
 const catalogue_1 = require("../models/catalogue");
-const CommissionMember_1 = require("../models/CommissionMember");
-const RatedSample_1 = require("../models/RatedSample");
+const commissionMember_1 = require("../models/commissionMember");
+const ratedSample_1 = require("../models/ratedSample");
 const sample_1 = require("../models/sample");
-const TastedSample_1 = require("../models/TastedSample");
+const tastedSample_1 = require("../models/tastedSample");
 const user_1 = require("../models/user");
 const ResponseError_1 = require("../utils/ResponseError");
 class UserRepository {
     constructor() {
         this.getCommissionCatalogues = (userId) => __awaiter(this, void 0, void 0, function* () {
-            const commissionCatalogues = yield CommissionMember_1.CommissionMember.find({ userId }).select("catalogueId");
+            const commissionCatalogues = yield commissionMember_1.CommissionMember.find({ userId }).select("catalogueId");
             const ids = [];
             commissionCatalogues.map((element) => { ids.push(element.catalogueId.toString()); });
             return yield catalogue_1.Catalogue.find({ published: false }).where("_id").in(ids).exec();
         });
         this.getRatedSamples = (userId, catalogueId) => __awaiter(this, void 0, void 0, function* () {
-            const filteredResult = yield RatedSample_1.RatedSample
+            const filteredResult = yield ratedSample_1.RatedSample
                 .find({
                 commissionMemberId: userId
             })
@@ -36,12 +36,12 @@ class UserRepository {
                 match: { catalogueId }
             })
                 .exec();
-            return yield RatedSample_1.RatedSample.find({
+            return yield ratedSample_1.RatedSample.find({
                 "_id": { $in: filteredResult.map(val => { return val.id; }) }
             }).exec();
         });
         this.addRatedSample = (commissionMemberId, sampleId, rating, update) => __awaiter(this, void 0, void 0, function* () {
-            const existedRatedSample = yield RatedSample_1.RatedSample.findOne({ commissionMemberId, sampleId });
+            const existedRatedSample = yield ratedSample_1.RatedSample.findOne({ commissionMemberId, sampleId });
             if (update && existedRatedSample == null) {
                 throw new ResponseError_1.ResponseError("Sample has not been rated yet");
             }
@@ -49,21 +49,16 @@ class UserRepository {
                 throw new ResponseError_1.ResponseError("Sample already rated by this commission member");
             }
             if (update) {
-                const updatedSample = yield RatedSample_1.RatedSample.findOneAndUpdate({
+                const updatedSample = yield ratedSample_1.RatedSample.findOneAndUpdate({
                     commissionMemberId, sampleId
                 }, {
                     rating
                 }, { new: true });
                 return (updatedSample);
             }
-            const ratedSample = new RatedSample_1.RatedSample({ commissionMemberId, sampleId, rating });
+            const ratedSample = new ratedSample_1.RatedSample({ commissionMemberId, sampleId, rating });
             yield ratedSample.save();
             return ratedSample;
-        });
-    }
-    getUsers() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield user_1.User.find({});
         });
     }
     getUserByEmail(email) {
@@ -98,14 +93,14 @@ class UserRepository {
     }
     getTastedSamples(catalogueId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const filteredResult = yield TastedSample_1.TastedSample.find({
+            const filteredResult = yield tastedSample_1.TastedSample.find({
                 userId
             }).populate({
                 path: "sampleId",
                 model: sample_1.Sample,
                 match: { catalogueId }
             }).exec();
-            return yield TastedSample_1.TastedSample.find({
+            return yield tastedSample_1.TastedSample.find({
                 "_id": { $in: filteredResult.map(val => { return val.id; }) }
             }).exec();
         });
@@ -113,13 +108,13 @@ class UserRepository {
     updateTastedSamples(tastedSamples, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             for (const tastedSample of tastedSamples) {
-                const foundResult = yield TastedSample_1.TastedSample.findOne({
+                const foundResult = yield tastedSample_1.TastedSample.findOne({
                     sampleId: tastedSample.sampleId,
                     userId: userId
                 }).exec();
                 if (foundResult != null) {
                     // update tasted wine
-                    yield TastedSample_1.TastedSample.findOneAndUpdate({
+                    yield tastedSample_1.TastedSample.findOneAndUpdate({
                         sampleId: tastedSample.sampleId,
                         userId: userId,
                         modifiedAt: { $lt: tastedSample.modifiedAt }
@@ -131,7 +126,7 @@ class UserRepository {
                 }
                 else {
                     // Add tasted wine to database
-                    const newTasted = new TastedSample_1.TastedSample({
+                    const newTasted = new tastedSample_1.TastedSample({
                         sampleId: tastedSample.sampleId,
                         userId: userId,
                         rating: tastedSample.rating,
@@ -145,7 +140,7 @@ class UserRepository {
     }
     deleteTastedSamples(tastedSamples, userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield TastedSample_1.TastedSample.deleteMany({
+            yield tastedSample_1.TastedSample.deleteMany({
                 sampleId: { $in: tastedSamples.map(val => { return val.sampleId; }) },
                 userId: userId
             });

@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CatalogueRepository = void 0;
 const catalogue_1 = require("../models/catalogue");
-const GrapeVarietal_1 = require("../models/GrapeVarietal");
+const grapeVarietal_1 = require("../models/grapeVarietal");
 const sample_1 = require("../models/sample");
 const winary_1 = require("../models/winary");
 const wine_1 = require("../models/wine");
@@ -54,7 +54,7 @@ class CatalogueRepository {
                         model: winary_1.Winary
                     }, {
                         path: "grapeVarietals",
-                        model: GrapeVarietal_1.GrapeVarietal
+                        model: grapeVarietal_1.GrapeVarietal
                     }]
             });
         });
@@ -70,7 +70,7 @@ class CatalogueRepository {
                         model: winary_1.Winary
                     }, {
                         path: "grapeVarietals",
-                        model: GrapeVarietal_1.GrapeVarietal
+                        model: grapeVarietal_1.GrapeVarietal
                     }]
             });
         });

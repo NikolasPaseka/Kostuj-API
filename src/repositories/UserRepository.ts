@@ -1,21 +1,12 @@
-import Long from "long";
 import { Catalogue } from "../models/catalogue";
-import { CommissionMember } from "../models/CommissionMember";
-import { FavoriteWine } from "../models/favoriteWine";
-import { GrapeVarietal } from "../models/GrapeVarietal";
-import { IRatedSample, RatedSample } from "../models/RatedSample";
+import { CommissionMember } from "../models/commissionMember";
+import { IRatedSample, RatedSample } from "../models/ratedSample";
 import { ISample, Sample } from "../models/sample";
-import { ITastedSample, TastedSample } from "../models/TastedSample";
+import { ITastedSample, TastedSample } from "../models/tastedSample";
 import { IUser, User } from "../models/user";
-import { Winary } from "../models/winary";
-import { Wine } from "../models/wine";
 import { ResponseError } from "../utils/ResponseError";
 
 export class UserRepository {
-
-    async getUsers() {
-        return await User.find({});
-    }
 
     async getUserByEmail(email: string) {
         const user = await User.findOne({ email });

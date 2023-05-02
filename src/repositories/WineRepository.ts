@@ -1,4 +1,4 @@
-import { GrapeVarietal } from "../models/GrapeVarietal";
+import { GrapeVarietal } from "../models/grapeVarietal";
 import { Winary } from "../models/winary";
 import { Wine } from "../models/wine";
 

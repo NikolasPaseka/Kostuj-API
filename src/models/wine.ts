@@ -1,5 +1,5 @@
 import { Schema, model, connect } from "mongoose";
-import { IGrapeVarietal } from "./GrapeVarietal";
+import { IGrapeVarietal } from "./grapeVarietal";
 
 export interface IWine {
     name: string,

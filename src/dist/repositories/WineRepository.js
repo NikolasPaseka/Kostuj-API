@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WineRepository = void 0;
-const GrapeVarietal_1 = require("../models/GrapeVarietal");
+const grapeVarietal_1 = require("../models/grapeVarietal");
 const winary_1 = require("../models/winary");
 const wine_1 = require("../models/wine");
 class WineRepository {
@@ -26,13 +26,13 @@ class WineRepository {
                     model: winary_1.Winary
                 }, {
                     path: "grapeVarietals",
-                    model: GrapeVarietal_1.GrapeVarietal
+                    model: grapeVarietal_1.GrapeVarietal
                 }]);
         });
     }
     getGrapeVarietals() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield GrapeVarietal_1.GrapeVarietal.find({});
+            return yield grapeVarietal_1.GrapeVarietal.find({});
         });
     }
 }

@@ -6,17 +6,11 @@ import { SECRET_KEY, TokenRequest } from "../middleware/auth";
 import { UserRepository } from "../repositories/UserRepository";
 import { ResponseError } from "../utils/ResponseError";
 import { CatalogueRepository } from "../repositories/CatalogueRepository";
-import { ITastedSample } from "../models/TastedSample";
+import { ITastedSample } from "../models/tastedSample";
 
 export class UserController {
     private userRepository = new UserRepository();
     private catalogueRepository = new CatalogueRepository();
-
-    getUsers = async (req: Request, res: Response) => {
-        const users: IUser[] = await this.userRepository.getUsers();
-
-        res.json(users);
-    }
 
     getUserById = async (req: Request, res: Response) => {
         const { id } = req.params;

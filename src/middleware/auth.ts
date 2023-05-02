@@ -1,4 +1,4 @@
-import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
+import jwt, { Secret } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { ObjectId } from 'mongoose';
 

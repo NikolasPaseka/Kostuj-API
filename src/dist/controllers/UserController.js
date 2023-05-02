@@ -23,10 +23,6 @@ class UserController {
     constructor() {
         this.userRepository = new UserRepository_1.UserRepository();
         this.catalogueRepository = new CatalogueRepository_1.CatalogueRepository();
-        this.getUsers = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const users = yield this.userRepository.getUsers();
-            res.json(users);
-        });
         this.getUserById = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const { id } = req.params;
             const user = yield this.userRepository.getUserById(id);

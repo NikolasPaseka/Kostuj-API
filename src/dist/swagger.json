@@ -11,7 +11,7 @@
     },
     "servers": [
         {
-            "url": "https://kostuj-api-production.up.railway.app/",
+            "url": "https://kostuj-api-mocked.up.railway.app/",
             "description": "Mocked development"
         }
     ],

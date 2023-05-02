@@ -17,7 +17,7 @@ const faker_1 = require("@faker-js/faker");
 const mongoose_1 = __importDefault(require("mongoose"));
 const winary_1 = require("../models/winary");
 const wine_1 = require("../models/wine");
-const GrapeVarietal_1 = require("../models/GrapeVarietal");
+const grapeVarietal_1 = require("../models/grapeVarietal");
 function getRandomFloat(min, max, decimals) {
     const str = (Math.random() * (max - min) + min).toFixed(decimals);
     return parseFloat(str);
@@ -70,7 +70,7 @@ function seedData() {
         try {
             yield wine_1.Wine.collection.drop();
             const winaries = yield winary_1.Winary.find({});
-            const grapeVarietals = yield GrapeVarietal_1.GrapeVarietal.find();
+            const grapeVarietals = yield grapeVarietal_1.GrapeVarietal.find();
             let index = 0;
             for (const sample of data.sampleMock) {
                 sample.winaryId = winaries[index];
