@@ -197,6 +197,123 @@
                 }
             }
         },
+        "/mapLocations": {
+            "get": {
+                "tags": [
+                    "Map locations"
+                ],
+                "summary": "Get all locations from wineries and wine feasts",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Cat"
+                        }
+                    },
+                    "404": {
+                        "description": "Failed. Cat not found."
+                    }
+                }
+            }
+        },
+        "/wines/{id}": {
+            "get": {
+                "tags": [
+                    "Wines"
+                ],
+                "summary": "Get wine with given ID",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "Cat with id",
+                        "schema": {
+                            "$ref": "#/definitions/id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Cat"
+                        }
+                    },
+                    "404": {
+                        "description": "Failed. Cat not found."
+                    }
+                }
+            }
+        },
+        "/wines/grapeVarietals": {
+            "get": {
+                "tags": [
+                    "Wines"
+                ],
+                "summary": "Get all grape varieatals",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Cat"
+                        }
+                    },
+                    "404": {
+                        "description": "Failed. Cat not found."
+                    }
+                }
+            }
+        },
+        "/wineries": {
+            "get": {
+                "tags": [
+                    "Winery"
+                ],
+                "summary": "Get all wineries",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Cat"
+                        }
+                    },
+                    "404": {
+                        "description": "Failed. Cat not found."
+                    }
+                }
+            }
+        },
+        "/wineries/{id}": {
+            "get": {
+                "tags": [
+                    "Winery"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "description": "Winery with id",
+                        "schema": {
+                            "$ref": "#/definitions/id"
+                        }
+                    }
+                ],
+                "summary": "Get all wineries",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Cat"
+                        }
+                    },
+                    "404": {
+                        "description": "Failed. Cat not found."
+                    }
+                }
+            }
+        },
         "/users/login": {
             "post": {
                 "tags": [
@@ -275,7 +392,7 @@
                     }
                 ],
                 "tags": [
-                    "Catalogues"
+                    "Users"
                 ],
                 "summary": "Get all rated samples within catalogue",
                 "responses": {
@@ -362,7 +479,7 @@
                     }
                 ],
                 "tags": [
-                    "Catalogues"
+                    "Users"
                 ],
                 "summary": "Get all saved information about tasted wine samples within given catalogue",
                 "responses": {
@@ -433,74 +550,6 @@
                     },
                     "400": {
                         "description": "Failed. Bad post data."
-                    }
-                }
-            }
-        },
-        "/mapLocations": {
-            "get": {
-                "tags": [
-                    "Map locations"
-                ],
-                "summary": "Get all locations from wineries and wine feasts",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/Cat"
-                        }
-                    },
-                    "404": {
-                        "description": "Failed. Cat not found."
-                    }
-                }
-            }
-        },
-        "/wines/{id}": {
-            "get": {
-                "tags": [
-                    "Wines"
-                ],
-                "summary": "Get wine with given ID",
-                "parameters": [
-                    {
-                        "in": "path",
-                        "name": "id",
-                        "required": true,
-                        "description": "Cat with id",
-                        "schema": {
-                            "$ref": "#/definitions/id"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/Cat"
-                        }
-                    },
-                    "404": {
-                        "description": "Failed. Cat not found."
-                    }
-                }
-            }
-        },
-        "/wines/grapeVarietals": {
-            "get": {
-                "tags": [
-                    "Wines"
-                ],
-                "summary": "Get all grape varieatals",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/Cat"
-                        }
-                    },
-                    "404": {
-                        "description": "Failed. Cat not found."
                     }
                 }
             }
