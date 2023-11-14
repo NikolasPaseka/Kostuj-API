@@ -18,12 +18,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf src/dist && npx tsc",
-    "prestart": "npm run build",
+    "build": "tsc",
     "start": "node src/dist/app.js",
-    "predev": "npm run build",
-    "dev": "concurrently \"npx tsc -w\" \"nodemon src/dist/app.js\"",
-    "host": "node src/dist/app.js"
+    "dev": "concurrently \"npx tsc -w\" \"nodemon src/dist/app.js\""
   },
   "keywords": [],
   "author": "",

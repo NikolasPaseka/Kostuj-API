@@ -2,4 +2,3 @@
 node_modules
 .env
 src/seeds
-src/dist
