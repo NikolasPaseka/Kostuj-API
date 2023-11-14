@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import { Document } from "mongoose";
-import { ICatalogue } from "../models/Catalogue";
-import { IWinary } from "../models/Winary";
 import { CatalogueRepository } from "../repositories/CatalogueRepository";
 import { WinaryRepository } from "../repositories/WinaryRepository";
 

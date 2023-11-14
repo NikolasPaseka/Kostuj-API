@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, connect, Date } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 export interface ITastedSample extends mongoose.Document {
     sampleId: Schema.Types.ObjectId,

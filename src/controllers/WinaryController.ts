@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { IWinary } from "../models/Winary";
 import { WinaryRepository } from "../repositories/WinaryRepository";
+
 export class WinaryController {
     private winaryRepository = new WinaryRepository();
 

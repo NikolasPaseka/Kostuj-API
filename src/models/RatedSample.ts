@@ -1,4 +1,4 @@
-import { Schema, model, connect } from "mongoose";
+import { Schema, model } from "mongoose";
 
 export interface IRatedSample extends Document {
     commissionMemberId: Schema.Types.ObjectId,

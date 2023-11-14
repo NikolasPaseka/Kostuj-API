@@ -1,4 +1,4 @@
-import { Schema, model, connect } from "mongoose";
+import { Schema, model } from "mongoose";
 import { IGrapeVarietal } from "./GrapeVarietal";
 
 export interface IWine {
