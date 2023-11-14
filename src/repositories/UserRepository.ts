@@ -1,9 +1,9 @@
-import { Catalogue } from "../models/catalogue";
-import { CommissionMember } from "../models/commissionMember";
-import { IRatedSample, RatedSample } from "../models/ratedSample";
-import { ISample, Sample } from "../models/sample";
-import { ITastedSample, TastedSample } from "../models/tastedSample";
-import { IUser, User } from "../models/user";
+import { Catalogue } from "../models/Catalogue";
+import { CommissionMember } from "../models/CommissionMember";
+import { IRatedSample, RatedSample } from "../models/RatedSample";
+import { ISample, Sample } from "../models/Sample";
+import { ITastedSample, TastedSample } from "../models/TastedSample";
+import { IUser, User } from "../models/User";
 import { ResponseError } from "../utils/ResponseError";
 
 export class UserRepository {

@@ -1,4 +1,4 @@
-import { Winary } from "../models/winary";
+import { Winary } from "../models/Winary";
 import { ResponseError } from "../utils/ResponseError";
 
 export class WinaryRepository {

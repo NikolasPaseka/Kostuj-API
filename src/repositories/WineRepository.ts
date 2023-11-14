@@ -1,6 +1,6 @@
-import { GrapeVarietal } from "../models/grapeVarietal";
-import { Winary } from "../models/winary";
-import { Wine } from "../models/wine";
+import { GrapeVarietal } from "../models/GrapeVarietal";
+import { Winary } from "../models/Winary";
+import { Wine } from "../models/Wine";
 
 export class WineRepository {
 

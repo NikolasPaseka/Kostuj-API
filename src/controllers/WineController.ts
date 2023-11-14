@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { IGrapeVarietal } from "../models/grapeVarietal";
-import { IWine } from "../models/wine";
+import { IGrapeVarietal } from "../models/GrapeVarietal";
+import { IWine } from "../models/Wine";
 import { WineRepository } from "../repositories/WineRepository";
 import { ResponseError } from "../utils/ResponseError";
 

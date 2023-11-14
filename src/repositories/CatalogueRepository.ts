@@ -1,8 +1,8 @@
-import { Catalogue, ICatalogue } from "../models/catalogue";
-import { GrapeVarietal } from "../models/grapeVarietal";
-import { Sample } from "../models/sample";
-import { Winary } from "../models/winary";
-import { IWine, Wine } from "../models/wine";
+import { Catalogue, ICatalogue } from "../models/Catalogue";
+import { GrapeVarietal } from "../models/GrapeVarietal";
+import { Sample } from "../models/Sample";
+import { Winary } from "../models/Winary";
+import { IWine, Wine } from "../models/Wine";
 import { ResponseError } from "../utils/ResponseError";
 
 

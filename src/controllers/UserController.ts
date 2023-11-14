@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import { IUser, User } from "../models/user";
+import { IUser, User } from "../models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { SECRET_KEY, TokenRequest } from "../middleware/auth";
 import { UserRepository } from "../repositories/UserRepository";
 import { ResponseError } from "../utils/ResponseError";
 import { CatalogueRepository } from "../repositories/CatalogueRepository";
-import { ITastedSample } from "../models/tastedSample";
+import { ITastedSample } from "../models/TastedSample";
 
 export class UserController {
     private userRepository = new UserRepository();
