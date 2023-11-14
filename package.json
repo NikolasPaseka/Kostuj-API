@@ -11,7 +11,8 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.6.0",
     "swagger-ui-express": "^4.6.2",
-    "ts-dotenv": "^0.9.0"
+    "ts-dotenv": "^0.9.0",
+    "typescript": "^5.2.2"
   },
   "name": "kostuj-api",
   "version": "1.0.0",
