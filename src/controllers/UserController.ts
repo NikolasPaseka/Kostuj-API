@@ -45,6 +45,13 @@ export class UserController {
         }
     }
 
+    deleteUser = async (req: TokenRequest, res: Response) => {
+        const userId = req.token._id.toString();
+
+        await this.userRepository.deleteUser(userId);
+        res.json("User deleted");
+    }
+
     getCommissionCatalogues = async (req: TokenRequest, res: Response) => {
         const userId = req.token._id.toString();
         const commissionCatalogues = await this.userRepository.getCommissionCatalogues(userId);

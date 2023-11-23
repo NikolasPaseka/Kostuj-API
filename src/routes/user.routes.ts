@@ -13,6 +13,9 @@ userRouter.route("/login")
 userRouter.route("/register")
     .post(catchAsync(userController.register))
 
+userRouter.route("/delete")
+    .post(auth, catchAsync(userController.deleteUser))
+
 userRouter.route("/commissionCatalogues")
     .get(auth, catchAsync(userController.getCommissionCatalogues))
 

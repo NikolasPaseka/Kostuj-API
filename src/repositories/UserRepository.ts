@@ -36,6 +36,13 @@ export class UserRepository {
         await user.save();
     }
 
+    async deleteUser(userId: string) {
+        const res = await User.deleteOne({_id: userId});
+        if (!res) {
+            throw new ResponseError("User cant be deleted");
+        }
+    }
+
     getCommissionCatalogues = async (userId: string) => {
         const commissionCatalogues = await CommissionMember.find({ userId }).select("catalogueId");
         const ids: string[] = []
