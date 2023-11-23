@@ -14,6 +14,7 @@ const catalogueSchema = new mongoose_1.Schema({
     },
     imageUrl: [{ type: String, required: false }],
     published: { type: Boolean, required: true, default: false },
-    locked: { type: Boolean, required: true, default: false }
+    locked: { type: Boolean, required: true, default: false },
+    maxWineRating: { type: Number, required: true, default: 20 }
 });
 exports.Catalogue = (0, mongoose_1.model)("Catalogue", catalogueSchema);

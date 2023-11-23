@@ -5,7 +5,7 @@ const mongoose_1 = require("mongoose");
 const wineSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     color: { type: String, required: true },
-    description: { type: String },
+    description: { type: String, default: null },
     year: {
         type: Number,
         required: true,
@@ -15,6 +15,7 @@ const wineSchema = new mongoose_1.Schema({
     alcoholContent: { type: Number },
     acidity: { type: Number },
     grapesSweetness: { type: Number },
+    tasteResult: { type: String },
     productionMethod: { type: String },
     grapeVarietals: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "GrapeVarietal" }],
     imageUrl: { type: String, required: false },

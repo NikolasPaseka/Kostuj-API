@@ -13,6 +13,7 @@ export interface ICatalogue {
     imageUrl?: string[],
     published: boolean,
     locked: boolean,
+    maxWineRating: number
 }
 
 const catalogueSchema = new Schema<ICatalogue>({
@@ -27,7 +28,8 @@ const catalogueSchema = new Schema<ICatalogue>({
     },
     imageUrl: [{ type: String, required: false }],
     published: { type: Boolean, required: true, default: false },
-    locked: { type: Boolean, required: true, default: false }
+    locked: { type: Boolean, required: true, default: false },
+    maxWineRating: { type: Number, required: true, default: 20 }
 });
 
 export const Catalogue = model<ICatalogue>("Catalogue", catalogueSchema);

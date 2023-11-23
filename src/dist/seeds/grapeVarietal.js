@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const GrapeVarietal_1 = require("../models/GrapeVarietal");
 const odrudy_json_1 = __importDefault(require("./odrudy.json"));
-mongoose_1.default.connect('mongodb+srv://passy:4R842dj2TqpKUVL8@mockeddb.weax9sr.mongodb.net/?retryWrites=true&w=majority')
+mongoose_1.default.connect('mongodb+srv://passy:4R842dj2TqpKUVL8@main.c4cc4mc.mongodb.net/dev?retryWrites=true&w=majority')
     .then(() => {
     console.log('mongo connection open');
     GrapeVarietal_1.GrapeVarietal.collection.drop();

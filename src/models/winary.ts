@@ -2,17 +2,16 @@ import { Schema, model } from "mongoose";
 
 export interface IWinary {
     name: string,
-    description: string,
-    phoneNumber: string,
-    email: string,
+    description?: string,
+    phoneNumber?: string,
+    email?: string,
     websitesUrl: string
     address: string,
     imageUrl?: string,
-    location: {
+    location?: {
         latitude: number,
         longitude: number
-    },
-
+    }
 }
 
 const winarySchema = new Schema<IWinary>({
@@ -24,8 +23,8 @@ const winarySchema = new Schema<IWinary>({
     address: { type: String, required: true },
     imageUrl: String,
     location: {
-        latitude: { type: Number, required: true },
-        longitude: { type: Number, required: true }
+        latitude: { type: Number },
+        longitude: { type: Number }
     },
 });
 

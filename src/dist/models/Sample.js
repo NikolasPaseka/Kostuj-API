@@ -5,6 +5,7 @@ const mongoose_1 = require("mongoose");
 const sampleSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     rating: { type: Number, required: false },
+    champion: { type: Boolean, required: true, default: false },
     catalogueId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Catalogue" },
     wineId: { type: mongoose_1.Schema.Types.ObjectId, ref: "Wine" }
 });

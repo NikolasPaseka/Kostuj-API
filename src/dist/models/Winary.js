@@ -11,8 +11,8 @@ const winarySchema = new mongoose_1.Schema({
     address: { type: String, required: true },
     imageUrl: String,
     location: {
-        latitude: { type: Number, required: true },
-        longitude: { type: Number, required: true }
+        latitude: { type: Number },
+        longitude: { type: Number }
     },
 });
 exports.Winary = (0, mongoose_1.model)("Winary", winarySchema);

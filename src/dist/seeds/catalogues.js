@@ -49,7 +49,7 @@ var sampleMock = {
 var data = (0, mocker_data_generator_1.default)()
     .schema('sampleMock', sampleMock, 30)
     .buildSync();
-mongoose_1.default.connect('mongodb+srv://passy:4R842dj2TqpKUVL8@mockeddb.weax9sr.mongodb.net/?retryWrites=true&w=majority')
+mongoose_1.default.connect('mongodb+srv://passy:4R842dj2TqpKUVL8@main.c4cc4mc.mongodb.net/dev?retryWrites=true&w=majority')
     .then(async () => {
     console.log('mongo connection open');
     //transformSchemasToClient();

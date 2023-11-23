@@ -45,10 +45,10 @@ var sampleMock = {
 var data = (0, mocker_data_generator_1.default)()
     .schema('sampleMock', sampleMock, 8)
     .buildSync();
-mongoose_1.default.connect('mongodb+srv://passy:4R842dj2TqpKUVL8@mockeddb.weax9sr.mongodb.net/?retryWrites=true&w=majority')
+mongoose_1.default.connect('mongodb+srv://passy:4R842dj2TqpKUVL8@main.c4cc4mc.mongodb.net/dev?retryWrites=true&w=majority')
     .then(() => {
     console.log('mongo connection open');
-    Winary_1.Winary.collection.drop();
+    //Winary.collection.drop();
     seedData();
 })
     .catch((err) => {
