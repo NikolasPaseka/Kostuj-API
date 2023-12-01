@@ -7,6 +7,13 @@ exports.User = void 0;
 const mongoose_1 = require("mongoose");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const constants_1 = require("../utils/constants");
+// export interface IUser {
+//     email: string,
+//     password: string,
+//     firstName: string,
+//     lastName: string,
+//     avatarImageUrl: string
+// }
 const userSchema = new mongoose_1.Schema({
     email: {
         type: String,

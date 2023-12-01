@@ -76,6 +76,12 @@ class UserRepository {
         const user = new User_1.User(userData);
         await user.save();
     }
+    async deleteUser(userId) {
+        const res = await User_1.User.deleteOne({ _id: userId });
+        if (!res) {
+            throw new ResponseError_1.ResponseError("User cant be deleted");
+        }
+    }
     async getTastedSamples(catalogueId, userId) {
         const filteredResult = await TastedSample_1.TastedSample.find({
             userId

@@ -11,6 +11,7 @@ import userRouter from "./routes/user.routes";
 import mapLocationRouter from "./routes/mapLocation.routes";
 import catalogueRouter from "./routes/catalogue.routes";
 import wineRouter from "./routes/wines.routes";
+import { GrapeVarietal } from "./models/GrapeVarietal";
 
 const env = load({
     PORT: Number,
@@ -30,6 +31,7 @@ app.use(bodyParser.json());
 app.get('/', (req: Request, res: Response) => {
     res.send("Kostuj API")
 });
+
 app.use('/catalogues', catalogueRouter);
 app.use('/wineries', wineryRouter);
 app.use('/wines', wineRouter);

@@ -40,6 +40,11 @@ class UserController {
                 throw new ResponseError_1.ResponseError("Incorrect credentials");
             }
         };
+        this.deleteUser = async (req, res) => {
+            const userId = req.token._id.toString();
+            await this.userRepository.deleteUser(userId);
+            res.json("User deleted");
+        };
         this.getCommissionCatalogues = async (req, res) => {
             const userId = req.token._id.toString();
             const commissionCatalogues = await this.userRepository.getCommissionCatalogues(userId);

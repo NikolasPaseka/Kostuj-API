@@ -13,6 +13,8 @@ userRouter.route("/login")
     .post((0, catchAsync_1.default)(userController.login));
 userRouter.route("/register")
     .post((0, catchAsync_1.default)(userController.register));
+userRouter.route("/delete")
+    .post(auth_1.auth, (0, catchAsync_1.default)(userController.deleteUser));
 userRouter.route("/commissionCatalogues")
     .get(auth_1.auth, (0, catchAsync_1.default)(userController.getCommissionCatalogues));
 userRouter.route("/:id")

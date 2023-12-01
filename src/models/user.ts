@@ -1,16 +1,16 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, InferSchemaType } from "mongoose";
 import bcrypt from "bcrypt";
 import { saltRounds } from "../utils/constants";
 
-export interface IUser {
-    email: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    avatarImageUrl: string
-}
+// export interface IUser {
+//     email: string,
+//     password: string,
+//     firstName: string,
+//     lastName: string,
+//     avatarImageUrl: string
+// }
 
-const userSchema = new Schema<IUser>({
+const userSchema = new Schema({
     email: {
         type: String,
         required: true,
@@ -30,4 +30,6 @@ userSchema.pre("save", async function (next) {
     next()
 });
 
-export const User = model<IUser>("User", userSchema);
+export type IUser = InferSchemaType<typeof userSchema>;
+
+export const User = model("User", userSchema);
