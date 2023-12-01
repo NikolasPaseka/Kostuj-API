@@ -21,8 +21,10 @@ export class MapLocationController {
             }
             delete object["_id"];
             delete object["__v"];
-
-            locationObjects.push(object);
+            
+            if (object["location"] != null) {
+                locationObjects.push(object);
+            }
         }
         return locationObjects;
     }
