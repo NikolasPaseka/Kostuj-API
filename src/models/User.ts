@@ -19,7 +19,8 @@ const userSchema = new Schema({
     password: { type: String, required: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    avatarImageUrl: { type: String, required: false }
+    avatarImageUrl: { type: String, required: false },
+    refreshTokens: [{ type: String }]
 });
 
 userSchema.pre("save", async function (next) {

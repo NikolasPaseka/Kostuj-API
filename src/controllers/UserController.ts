@@ -1,12 +1,13 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { IUser } from "../models/User";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { SECRET_KEY, TokenRequest } from "../middleware/auth";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { authEnv, generateAccessToken, generateRefreshToken, TokenRequest } from "../middleware/auth";
 import { UserRepository } from "../repositories/UserRepository";
 import { ResponseError } from "../utils/ResponseError";
 import { CatalogueRepository } from "../repositories/CatalogueRepository";
 import { ITastedSample } from "../models/TastedSample";
+import catchAsync from "../utils/catchAsync";
 
 export class UserController {
     private userRepository = new UserRepository();
@@ -34,15 +35,44 @@ export class UserController {
         const isMatch = bcrypt.compareSync(password, foundUser.password);
     
         if (isMatch) {
-            const token = jwt.sign({ _id: foundUser._id?.toString(), email: foundUser.email }, SECRET_KEY, {});
+            const accessToken = generateAccessToken(foundUser._id.toString(), foundUser.email);
+            const refreshToken = generateRefreshToken(foundUser._id.toString(), foundUser.email);
+            this.userRepository.addUserRefreshToken(foundUser.id, refreshToken);
             return res.json({
                 id: foundUser._id,
                 email: foundUser.email,
-                token: token
+                accessToken: accessToken,
+                refreshToken: refreshToken
             });
         } else {
-            throw new ResponseError("Incorrect credentials");
+            throw new ResponseError("Incorrect credentials", 401);
         }
+    }
+
+    loginGoogle = async (req: TokenRequest, res: Response) => {
+        console.log("GOOGLE LOGIN")
+        res.send("GOOGLE LOGIN")
+    }
+
+    refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+        const { email, refreshToken } = req.body;
+        if (refreshToken == null || email == null) {
+            throw new ResponseError("Invalid Request", 400);
+        }
+
+        const foundUser = await this.userRepository.getUserByEmail(email);
+        try {
+            jwt.verify(refreshToken, authEnv.REFRESH_TOKEN_SECRET);
+        } catch {
+            await this.userRepository.deleteAllUserRefreshTokens(foundUser._id.toString());
+            throw new ResponseError("Cannot verify refresh token", 401);
+        }
+        if (!foundUser.refreshTokens.includes(refreshToken)) {
+            throw new ResponseError("Invalid refresh token", 403);
+        }
+
+        const accessToken = generateAccessToken(foundUser._id.toString(), foundUser.email);
+        res.json({ accessToken: accessToken });
     }
 
     deleteUser = async (req: TokenRequest, res: Response) => {

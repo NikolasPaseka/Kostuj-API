@@ -10,8 +10,14 @@ const userController = new UserController();
 userRouter.route("/login")
     .post(catchAsync(userController.login))
 
+userRouter.route("/login/google")
+    .get(catchAsync(userController.loginGoogle))
+
 userRouter.route("/register")
     .post(catchAsync(userController.register))
+
+userRouter.route("/refreshToken")
+    .get(catchAsync(userController.refreshToken))
 
 userRouter.route("/delete")
     .post(auth, catchAsync(userController.deleteUser))

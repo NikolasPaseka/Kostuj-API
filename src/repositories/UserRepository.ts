@@ -1,7 +1,8 @@
+import { Mongoose, ObjectId } from "mongoose";
 import { Catalogue } from "../models/Catalogue";
 import { CommissionMember } from "../models/CommissionMember";
-import { IRatedSample, RatedSample } from "../models/RatedSample";
-import { ISample, Sample } from "../models/Sample";
+import { RatedSample } from "../models/RatedSample";
+import { Sample } from "../models/Sample";
 import { ITastedSample, TastedSample } from "../models/TastedSample";
 import { IUser, User } from "../models/User";
 import { ResponseError } from "../utils/ResponseError";
@@ -41,6 +42,27 @@ export class UserRepository {
         if (!res) {
             throw new ResponseError("User cant be deleted");
         }
+    }
+
+    addUserRefreshToken = async (userId: string, token: string) => {
+        await User.updateOne(
+            { _id: userId },
+            { $push: { refreshTokens: token }}
+        );
+    }
+
+    deleteUserRefreshToken = async (userId: string, token: string) => {
+        await User.updateOne(
+            { _id: userId },
+            { $pullAll: { refreshTokens: token }}
+        );
+    }
+
+    deleteAllUserRefreshTokens = async (userId: string) => {
+        await User.updateOne(
+            { _id: userId },
+            { $set: { refreshTokens: [] }}
+        )
     }
 
     getCommissionCatalogues = async (userId: string) => {
