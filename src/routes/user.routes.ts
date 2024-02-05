@@ -17,7 +17,10 @@ userRouter.route("/register")
     .post(catchAsync(userController.register))
 
 userRouter.route("/refreshToken")
-    .get(catchAsync(userController.refreshToken))
+    .post(catchAsync(userController.refreshToken))
+
+userRouter.route("/logout")
+    .post(auth, catchAsync(userController.logout))
 
 userRouter.route("/delete")
     .post(auth, catchAsync(userController.deleteUser))

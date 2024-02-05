@@ -7,7 +7,6 @@ import { UserRepository } from "../repositories/UserRepository";
 import { ResponseError } from "../utils/ResponseError";
 import { CatalogueRepository } from "../repositories/CatalogueRepository";
 import { ITastedSample } from "../models/TastedSample";
-import catchAsync from "../utils/catchAsync";
 
 export class UserController {
     private userRepository = new UserRepository();
@@ -36,7 +35,7 @@ export class UserController {
     
         if (isMatch) {
             const accessToken = generateAccessToken(foundUser._id.toString(), foundUser.email);
-            const refreshToken = generateRefreshToken(foundUser._id.toString(), foundUser.email);
+            const refreshToken = generateRefreshToken(foundUser._id.toString());
             this.userRepository.addUserRefreshToken(foundUser.id, refreshToken);
             return res.json({
                 id: foundUser._id,
@@ -54,7 +53,7 @@ export class UserController {
         res.send("GOOGLE LOGIN")
     }
 
-    refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+    refreshToken = async (req: Request, res: Response) => {
         const { email, refreshToken } = req.body;
         if (refreshToken == null || email == null) {
             throw new ResponseError("Invalid Request", 400);
@@ -68,11 +67,25 @@ export class UserController {
             throw new ResponseError("Cannot verify refresh token", 401);
         }
         if (!foundUser.refreshTokens.includes(refreshToken)) {
-            throw new ResponseError("Invalid refresh token", 403);
+            await this.userRepository.deleteAllUserRefreshTokens(foundUser._id.toString());
+            throw new ResponseError("Invalid refresh token", 401);
         }
 
         const accessToken = generateAccessToken(foundUser._id.toString(), foundUser.email);
-        res.json({ accessToken: accessToken });
+        const newRefreshToken = generateRefreshToken(foundUser._id.toString());
+        await this.userRepository.deleteUserRefreshToken(foundUser._id.toString(), refreshToken);
+        await this.userRepository.addUserRefreshToken(foundUser._id.toString(), newRefreshToken);
+
+        res.json({ 
+            accessToken: accessToken,
+            refreshToken: newRefreshToken
+        });
+    }
+
+    logout = async (req: TokenRequest, res: Response) => {
+        const userId = req.token._id;
+        await this.userRepository.deleteAllUserRefreshTokens(userId.toString());
+        res.json("Succesfuly logout");
     }
 
     deleteUser = async (req: TokenRequest, res: Response) => {

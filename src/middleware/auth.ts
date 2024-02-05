@@ -42,11 +42,17 @@ export function generateAccessToken(userId: string, email: string): string {
     return jwt.sign({ 
         _id: userId, 
         email: email 
-    }, authEnv.ACCESS_TOKEN_SECRET, { 
+    }, 
+    authEnv.ACCESS_TOKEN_SECRET, { 
         expiresIn: '30s'
     });
 }
 
-export function generateRefreshToken(userId: string, email: string): string {
-    return jwt.sign({ _id: userId }, authEnv.REFRESH_TOKEN_SECRET, {});
+export function generateRefreshToken(userId: string): string {
+    return jwt.sign({ 
+        _id: userId 
+    }, 
+    authEnv.REFRESH_TOKEN_SECRET, {
+        expiresIn: '90d'
+    });
 }

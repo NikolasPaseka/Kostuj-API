@@ -54,7 +54,7 @@ export class UserRepository {
     deleteUserRefreshToken = async (userId: string, token: string) => {
         await User.updateOne(
             { _id: userId },
-            { $pullAll: { refreshTokens: token }}
+            { $pull: { refreshTokens: token }}
         );
     }
 
