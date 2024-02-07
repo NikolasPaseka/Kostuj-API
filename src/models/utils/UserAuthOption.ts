@@ -1,4 +1,4 @@
 export enum UserAuthOption {
     Basic = "BASIC",
-    Google = "Google"
+    Google = "GOOGLE"
 }
