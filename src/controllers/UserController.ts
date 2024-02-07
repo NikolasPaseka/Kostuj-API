@@ -1,16 +1,30 @@
 import { NextFunction, Request, Response } from "express";
 import { IUser } from "../models/User";
 import bcrypt from "bcrypt";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { OAuth2Client } from "google-auth-library";
 import { authEnv, generateAccessToken, generateRefreshToken, TokenRequest } from "../middleware/auth";
 import { UserRepository } from "../repositories/UserRepository";
 import { ResponseError } from "../utils/ResponseError";
 import { CatalogueRepository } from "../repositories/CatalogueRepository";
 import { ITastedSample } from "../models/TastedSample";
+import { UserAuthOption } from "../models/utils/UserAuthOption";
 
 export class UserController {
     private userRepository = new UserRepository();
     private catalogueRepository = new CatalogueRepository();
+
+    private sendLoginResponse = (user: IUser, userId: string, res: Response) => {
+        const accessToken = generateAccessToken(userId, user.email);
+        const refreshToken = generateRefreshToken(userId);
+        this.userRepository.addUserRefreshToken(userId, refreshToken);
+        return res.json({
+            id: userId,
+            email: user.email,
+            accessToken: accessToken,
+            refreshToken: refreshToken
+        });
+    }
 
     getUserById = async (req: Request, res: Response) => {
         const { id } = req.params;
@@ -30,27 +44,48 @@ export class UserController {
     login = async (req: Request, res: Response) => {
         const { email, password } = req.body;
         const foundUser = await this.userRepository.getUserByEmail(email);
+        if (foundUser == null) {
+            throw new ResponseError("Use does not exist", 404);
+        }
 
         const isMatch = bcrypt.compareSync(password, foundUser.password);
     
         if (isMatch) {
-            const accessToken = generateAccessToken(foundUser._id.toString(), foundUser.email);
-            const refreshToken = generateRefreshToken(foundUser._id.toString());
-            this.userRepository.addUserRefreshToken(foundUser.id, refreshToken);
-            return res.json({
-                id: foundUser._id,
-                email: foundUser.email,
-                accessToken: accessToken,
-                refreshToken: refreshToken
-            });
+            this.sendLoginResponse(foundUser, foundUser.id, res);
         } else {
             throw new ResponseError("Incorrect credentials", 401);
         }
     }
 
-    loginGoogle = async (req: TokenRequest, res: Response) => {
-        console.log("GOOGLE LOGIN")
-        res.send("GOOGLE LOGIN")
+    loginGoogle = async (req: Request, res: Response) => {
+        const { clientToken, email, firstName, lastName, googleId } = req.body;
+        const googleClient = new OAuth2Client();
+        try {
+            await googleClient.verifyIdToken({
+                idToken: clientToken,
+                audience: "759292546744-7auna86rat46rcrqbg629adpah82pnh7.apps.googleusercontent.com"
+            });
+        } catch (err) {
+            throw new ResponseError("Incorrect credentials", 401);
+        }
+
+        const foundUser = await this.userRepository.getUserByEmail(email);
+        if (foundUser != null) {
+            this.sendLoginResponse(foundUser, foundUser.id, res);
+        } else {
+            const createdUser = await this.userRepository.createUser({
+                email: email,
+                password: googleId,
+                firstName: firstName,
+                lastName: lastName,
+                accountOption: UserAuthOption.Google,
+                refreshTokens: []
+            });
+            if (createdUser == null) {
+                throw new ResponseError("Error creating user", 400);
+            }
+            this.sendLoginResponse(createdUser, createdUser.id, res)
+        }
     }
 
     refreshToken = async (req: Request, res: Response) => {
@@ -60,6 +95,9 @@ export class UserController {
         }
 
         const foundUser = await this.userRepository.getUserByEmail(email);
+        if (foundUser == null) {
+            throw new ResponseError("User does not exist", 404);
+        }
         try {
             jwt.verify(refreshToken, authEnv.REFRESH_TOKEN_SECRET);
         } catch {
@@ -90,7 +128,6 @@ export class UserController {
 
     deleteUser = async (req: TokenRequest, res: Response) => {
         const userId = req.token._id.toString();
-
         await this.userRepository.deleteUser(userId);
         res.json("User deleted");
     }

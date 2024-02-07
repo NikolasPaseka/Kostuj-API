@@ -10,11 +10,7 @@ import { ResponseError } from "../utils/ResponseError";
 export class UserRepository {
 
     async getUserByEmail(email: string) {
-        const user = await User.findOne({ email });
-        if (user == null) {
-            throw new ResponseError("Incorrect credentials", 400);
-        }
-        return user;
+        return await User.findOne({ email });
     }
 
     async getUserById(id: string) {
@@ -27,21 +23,18 @@ export class UserRepository {
 
     async createUser(userData: IUser) {
         // check if user already exists
-        const email = userData.email
-        const res = await User.findOne({ email })
+        const res = await this.getUserByEmail(userData.email);
         if (res) {
             throw new ResponseError("User with this email address already exists");
         }
-
         const user = new User(userData);
-        await user.save();
+        return user.save();
     }
 
     async deleteUser(userId: string) {
-        const res = await User.deleteOne({_id: userId});
-        if (!res) {
-            throw new ResponseError("User cant be deleted");
-        }
+        await User.deleteOne({ _id: userId });
+        await TastedSample.deleteMany({ userId: userId });
+        await CommissionMember.deleteMany({ userId: userId });
     }
 
     addUserRefreshToken = async (userId: string, token: string) => {

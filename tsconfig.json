@@ -4,6 +4,7 @@
     "module": "CommonJS",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "outDir": "src/dist"
+    "outDir": "src/dist",
+    "strictNullChecks": true
 	}
 }

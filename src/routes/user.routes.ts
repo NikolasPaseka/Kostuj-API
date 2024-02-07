@@ -11,7 +11,7 @@ userRouter.route("/login")
     .post(catchAsync(userController.login))
 
 userRouter.route("/login/google")
-    .get(catchAsync(userController.loginGoogle))
+    .post(catchAsync(userController.loginGoogle))
 
 userRouter.route("/register")
     .post(catchAsync(userController.register))
