@@ -13,8 +13,8 @@ export class UserRepository {
         return await User.findOne({ email });
     }
 
-    async getUserById(id: string) {
-        const user = await User.findById(id);
+    async getUserById(id: ObjectId | string) {
+        const user = await User.findById(id).select("email firstName lastName avatarImageUrl");
         if (user == null) {
             throw new ResponseError("User does not exist", 404);
         }
@@ -35,6 +35,20 @@ export class UserRepository {
         await User.deleteOne({ _id: userId });
         await TastedSample.deleteMany({ userId: userId });
         await CommissionMember.deleteMany({ userId: userId });
+    }
+
+    editUserData = async (userId: ObjectId, userData: IUser) => {
+        await User.updateOne(
+            { _id: userId },
+            { $set: { 
+                firstName: userData.firstName,
+                lastName: userData.lastName
+            }}
+        )
+    }
+
+    editUserAvatar = async (userId: ObjectId, avatarImageUrl: string) => {
+        await User.updateOne({ _id: userId }, { avatarImageUrl });  
     }
 
     addUserRefreshToken = async (userId: string, token: string) => {

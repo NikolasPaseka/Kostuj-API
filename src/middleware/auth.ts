@@ -44,7 +44,7 @@ export function generateAccessToken(userId: string, email: string): string {
         email: email 
     }, 
     authEnv.ACCESS_TOKEN_SECRET, { 
-        expiresIn: '30s'
+        expiresIn: '5m'
     });
 }
 

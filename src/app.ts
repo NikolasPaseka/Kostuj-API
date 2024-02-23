@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import bodyParser from "body-parser";
 import { connect } from "./config/db.config";
+require("./config/cloudinary");
 import { load } from 'ts-dotenv';
 import { errorHandler } from "./middleware/errorHandler";
 import swaggerUi from 'swagger-ui-express'
@@ -11,7 +12,6 @@ import userRouter from "./routes/user.routes";
 import mapLocationRouter from "./routes/mapLocation.routes";
 import catalogueRouter from "./routes/catalogue.routes";
 import wineRouter from "./routes/wines.routes";
-import { GrapeVarietal } from "./models/GrapeVarietal";
 
 const env = load({
     PORT: Number,

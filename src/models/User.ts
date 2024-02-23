@@ -1,4 +1,4 @@
-import { Schema, model, InferSchemaType, Document, Types } from "mongoose";
+import { Schema, model, InferSchemaType, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import { saltRounds } from "../utils/constants";
 import { UserAuthOption } from "./utils/UserAuthOption";
@@ -38,6 +38,6 @@ userSchema.pre("save", async function (next) {
     next()
 });
 
-export type IUser = InferSchemaType<typeof userSchema>; 
+export type IUser = InferSchemaType<typeof userSchema> & Partial<{ _id: Types.ObjectId }>; 
 
 export const User = model("User", userSchema);

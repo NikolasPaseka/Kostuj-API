@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { IUser } from "../models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -9,6 +9,8 @@ import { ResponseError } from "../utils/ResponseError";
 import { CatalogueRepository } from "../repositories/CatalogueRepository";
 import { ITastedSample } from "../models/TastedSample";
 import { UserAuthOption } from "../models/utils/UserAuthOption";
+import { ObjectId } from "mongoose";
+import { handleImageUpload } from "../utils/handleImageUpload";
 
 export class UserController {
     private userRepository = new UserRepository();
@@ -45,7 +47,7 @@ export class UserController {
         const { email, password } = req.body;
         const foundUser = await this.userRepository.getUserByEmail(email);
         if (foundUser == null) {
-            throw new ResponseError("Use does not exist", 404);
+            throw new ResponseError("Incorrect credentials", 401);
         }
 
         const isMatch = bcrypt.compareSync(password, foundUser.password);
@@ -71,8 +73,13 @@ export class UserController {
 
         const foundUser = await this.userRepository.getUserByEmail(email);
         if (foundUser != null) {
-            this.sendLoginResponse(foundUser, foundUser.id, res);
-        } else {
+            if (foundUser.accountOption == UserAuthOption.Google) {
+                this.sendLoginResponse(foundUser, foundUser.id, res);
+            } else {
+                throw new ResponseError("User with this email already exists", 400);
+            }
+        } 
+        else {
             const createdUser = await this.userRepository.createUser({
                 email: email,
                 password: googleId,
@@ -124,6 +131,27 @@ export class UserController {
         const userId = req.token._id;
         await this.userRepository.deleteAllUserRefreshTokens(userId.toString());
         res.json("Succesfuly logout");
+    }
+
+    editUser = async (req: TokenRequest, res: Response) => {
+        const userId: ObjectId = req.token._id;
+        const userData: IUser = req.body;
+        await this.userRepository.editUserData(userId, userData);
+        
+        const updatedUser = await this.userRepository.getUserById(userId);
+        res.json(updatedUser);
+    }
+
+    editUserAvatar = async (req: TokenRequest, res: Response) => {
+        const userId: ObjectId = req.token._id;
+        const avatarImage = req.file;
+
+        if (avatarImage == null) {
+            throw new ResponseError("No image provided", 400);
+        }
+        const imageUrl = await handleImageUpload(userId.toString() + "_avatar", "kostuj_avatar", avatarImage);
+        this.userRepository.editUserAvatar(userId, imageUrl);
+        res.json(imageUrl);
     }
 
     deleteUser = async (req: TokenRequest, res: Response) => {

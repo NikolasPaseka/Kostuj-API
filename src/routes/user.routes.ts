@@ -3,6 +3,7 @@ import { UserController } from "../controllers/UserController";
 
 import catchAsync from "../utils/catchAsync";
 import { auth } from "../middleware/auth";
+import { multerUpload } from "../middleware/multer";
 
 const userRouter = Router();
 const userController = new UserController();
@@ -21,6 +22,12 @@ userRouter.route("/refreshToken")
 
 userRouter.route("/logout")
     .post(auth, catchAsync(userController.logout))
+
+userRouter.route("/edit")
+    .patch(auth, catchAsync(userController.editUser))
+
+userRouter.route("/edit/avatar")
+    .patch(auth, multerUpload, catchAsync(userController.editUserAvatar))
 
 userRouter.route("/delete")
     .post(auth, catchAsync(userController.deleteUser))
