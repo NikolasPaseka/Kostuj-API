@@ -12,7 +12,7 @@ export class CatalogueRepository {
       }
     
     getAllCatalogues = async () => {
-        return await Catalogue.find();
+        return Catalogue.find();
     }
 
     getCatalogues = async (page: number, limit: number) => {
@@ -21,7 +21,7 @@ export class CatalogueRepository {
     }
 
     getCatalogueByTitle = async (title: string) => {
-        return await Catalogue.find({ title: { $regex: title, $options: "i" }});
+        return Catalogue.find({ title: { $regex: title, $options: "i" }});
     }
 
     async getCatalogueDetail(catalogueId: string) {
@@ -33,24 +33,24 @@ export class CatalogueRepository {
     }
 
     async getCatalogueSamples(catalogueId: string) {
-        return await Sample.find({
+        return Sample.find({
             catalogueId: catalogueId
         })
-        .populate({ 
-            path: "wineId", 
-            model: Wine,
-            populate: [{
-                path: "winaryId",
-                model: Winary
-            }, {
-                path: "grapeVarietals",
-                model: GrapeVarietal
-            }]
-        });
+            .populate({
+                path: "wineId",
+                model: Wine,
+                populate: [{
+                    path: "winaryId",
+                    model: Winary
+                }, {
+                    path: "grapeVarietals",
+                    model: GrapeVarietal
+                }]
+            });
     }
 
     async getCatalogueSampleDetail(id: string) {
-        return await Sample.findById(id)
+        return Sample.findById(id)
         .populate({ 
             path: "wineId", 
             model: Wine,
@@ -76,6 +76,6 @@ export class CatalogueRepository {
         wineResults.map(x => { wineriesIds.push(x.winaryId.toString()) });
 
         wineriesIds = wineriesIds.filter(this.onlyUnique);
-        return await Winary.find().where("_id").in(wineriesIds);
+        return Winary.find().where("_id").in(wineriesIds);
     }
 }

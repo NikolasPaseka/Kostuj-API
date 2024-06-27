@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 
 import { CatalogueRepository } from "../repositories/CatalogueRepository";
 import { ResponseError } from "../utils/ResponseError";
+import {IWinary} from "../models/Winary";
 
 export class CatalogueController {
 
@@ -49,7 +50,7 @@ export class CatalogueController {
 
     getParticipatedWineries = async (req: Request, res: Response) => {
         const { id } = req.params;
-        const wineries = await this.catalogueRepository.getParticipatedWineries(id);
+        const wineries: IWinary[] = await this.catalogueRepository.getParticipatedWineries(id);
 
         res.json(wineries);
     }

@@ -8,6 +8,7 @@ export const errorHandler: ErrorRequestHandler = (err: ResponseError, req: Reque
     
     res.statusCode = statusCode;
     res.json({
-      "error": err.message
+      "error": err.message,
+      "code": statusCode,
     })
 }

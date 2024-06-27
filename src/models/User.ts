@@ -3,14 +3,6 @@ import bcrypt from "bcrypt";
 import { saltRounds } from "../utils/constants";
 import { UserAuthOption } from "./utils/UserAuthOption";
 
-// export interface IUser {
-//     email: string,
-//     password: string,
-//     firstName: string,
-//     lastName: string,
-//     avatarImageUrl: string
-// }
-
 const userSchema = new Schema({
     email: {
         type: String,
@@ -21,10 +13,10 @@ const userSchema = new Schema({
     firstName: { type: String, required: true },
     lastName: { type: String },
     avatarImageUrl: { type: String, required: false },
-    refreshTokens: [{ type: String}],
+    refreshTokens: [{ type: String }],
     accountOption: {
         type: String,
-        required: true,
+        required: true, 
         default: UserAuthOption.Basic,
         enum: UserAuthOption
     }
