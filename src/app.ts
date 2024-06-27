@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import bodyParser from "body-parser";
+import cors from "cors";
 import { connect } from "./config/db.config";
 require("./config/cloudinary");
 import { load } from 'ts-dotenv';
@@ -20,6 +21,12 @@ const env = load({
 // connect to databse
 connect();
 const app: Express = express();
+
+// configure CORS
+const options: cors.CorsOptions = {
+    origin: "*"
+};
+app.use(cors(options));
 
 // configure the app to use bodyParser()
 app.use(bodyParser.urlencoded({
