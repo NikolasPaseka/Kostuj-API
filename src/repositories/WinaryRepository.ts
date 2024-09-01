@@ -1,5 +1,6 @@
-import { Winary } from "../models/Winary";
+import { Winary, WineryDomain } from "../models/Winary";
 import { ResponseError } from "../utils/ResponseError";
+import { ObjectId } from "mongoose";
 
 export class WinaryRepository {
 
@@ -13,5 +14,14 @@ export class WinaryRepository {
             throw new ResponseError("Catalogue not found", 404);
         }
         return winery;
+    }
+
+    //Admins part
+    async getCataloguesByAdmin(adminId: ObjectId) {
+        return Winary.find({ adminId: adminId });
+    }
+
+    async createWinary(winery: WineryDomain) {
+        return await new Winary(winery).save();
     }
 }

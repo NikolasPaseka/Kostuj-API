@@ -37,7 +37,7 @@ export class UserController {
 
     register = async (req: Request, res: Response) => {
         const user = req.body;
-
+        
         await this.userRepository.createUser(user);
 
         return await this.login(req, res);

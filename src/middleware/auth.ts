@@ -23,7 +23,7 @@ export interface TokenRequest extends Request {
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const token = req.header('Authorization')?.replace('Bearer ', '');
-
+        
         if (!token) {
             throw new Error();
         }
@@ -44,7 +44,7 @@ export function generateAccessToken(userId: string, email: string): string {
         email: email 
     }, 
     authEnv.ACCESS_TOKEN_SECRET, { 
-        expiresIn: '5m'
+        expiresIn: '90d'
     });
 }
 

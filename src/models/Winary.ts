@@ -1,20 +1,6 @@
-import { Schema, model } from "mongoose";
+import { InferSchemaType, Schema, Types, model } from "mongoose";
 
-export interface IWinary {
-    name: string,
-    description?: string,
-    phoneNumber?: string,
-    email?: string,
-    websitesUrl: string
-    address: string,
-    imageUrl?: string,
-    location?: {
-        latitude: number,
-        longitude: number
-    }
-}
-
-const winarySchema = new Schema<IWinary>({
+const winarySchema = new Schema({
     name: { type: String, required: true },
     description: { type: String },
     phoneNumber: { type: String },
@@ -26,6 +12,11 @@ const winarySchema = new Schema<IWinary>({
         latitude: { type: Number },
         longitude: { type: Number }
     },
+    adminId: { type: Schema.Types.ObjectId, ref: "User"},
+    isPublic: { type: Boolean, required: true, default: false },
 });
+
+export type IWinary = InferSchemaType<typeof winarySchema> & Partial<{ _id: Types.ObjectId }>; 
+export type WineryDomain = InferSchemaType<typeof winarySchema> & Partial<{ id: string }>;
 
 export const Winary = model<IWinary>("Winary", winarySchema);

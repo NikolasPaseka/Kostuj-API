@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { IWinary } from "../models/Winary";
 import { WinaryRepository } from "../repositories/WinaryRepository";
+import { TokenRequest } from "../middleware/auth";
+import { ObjectId } from "mongoose";
 
 export class WinaryController {
     private winaryRepository = new WinaryRepository();
@@ -16,5 +18,13 @@ export class WinaryController {
         const winery = await this.winaryRepository.getWineryDetail(id);
 
         res.json(winery);
+    }
+
+    // Admins part
+    getWineriesByAdmin = async (req: TokenRequest, res: Response) => {
+        const adminId: ObjectId = req.token._id;
+
+        const adminCatalogues = await this.winaryRepository.getCataloguesByAdmin(adminId);
+        res.json(adminCatalogues);
     }
 }

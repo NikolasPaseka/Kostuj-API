@@ -1,7 +1,8 @@
+import { ObjectId } from "mongoose";
 import { Catalogue, ICatalogue } from "../models/Catalogue";
 import { GrapeVarietal } from "../models/GrapeVarietal";
 import { Sample } from "../models/Sample";
-import { Winary } from "../models/Winary";
+import { IWinary, Winary } from "../models/Winary";
 import { IWine, Wine } from "../models/Wine";
 import { ResponseError } from "../utils/ResponseError";
 
@@ -67,15 +68,55 @@ export class CatalogueRepository {
     async getParticipatedWineries(catalogueId: string) {
         // TODO CHANGE na particepated wineries entries
         const samplesResult =  await Sample.find({ catalogueId: catalogueId });
-        console.log(samplesResult);
         const wineIds: string[] = [];
-        samplesResult.map(x => { wineIds.push(x.wineId.toString()) });
+        samplesResult.map(x => { wineIds.push(x.wineId?.toString() ?? "") });
 
         const wineResults = await Wine.find().where("_id").in(wineIds);
         let wineriesIds: string[] = [];
         wineResults.map(x => { wineriesIds.push(x.winaryId.toString()) });
 
         wineriesIds = wineriesIds.filter(this.onlyUnique);
-        return Winary.find().where("_id").in(wineriesIds);
+        let firstSet = await Winary.find().where("_id").in(wineriesIds);
+        let secondSet = await Catalogue.find({ _id: catalogueId })
+            .populate("participatedWineries")
+            .select("participatedWineries")
+        
+        secondSet = secondSet.map((x: any) => x.participatedWineries).flat();
+
+        const finalSet = [...firstSet, ...secondSet
+            .filter((x: any) => !firstSet.find(el => x.id == el.id))
+        ];
+
+        //return [...new Set([...firstSet, ...secondSet])];
+
+        return finalSet;
+    }
+
+    // Admins part
+
+    getCataloguesByAdmin = async (adminId: ObjectId) => {
+        return await Catalogue.find({ adminId: adminId });
+    }
+
+    createCatalogue = async (catalogue: ICatalogue) => {
+        const newCatalogue = new Catalogue(catalogue);
+        await newCatalogue.save();
+        return newCatalogue;
+    }
+
+    updateCatalogue = async (catalogueId: string, catalogue: ICatalogue) =>{
+        return await Catalogue.findOneAndReplace({ _id: catalogueId }, catalogue);
+    }
+
+    deleteCatalogue = async (catalogueId: string, adminId: ObjectId) => {
+        await Catalogue.deleteOne({ _id: catalogueId, adminId: adminId });
+    }
+
+    changePublishState = async (catalogueId: string, publishState: boolean) => {
+        await Catalogue.updateOne({ _id: catalogueId }, { $set: { published: publishState } });
+    }
+
+    addParticipatedWinary = async (catalogueId: string, winaryId: string) => {
+        await Catalogue.updateOne({ _id: catalogueId }, { $push: { participatedWineries: winaryId } });
     }
 }

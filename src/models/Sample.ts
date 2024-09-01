@@ -1,15 +1,7 @@
-import { Schema, model } from "mongoose";
+import { InferSchemaType, Schema, Types, model } from "mongoose";
 
-export interface ISample {
-    name: string,
-    rating?: number,
-    champion: boolean,
-    catalogueId: Schema.Types.ObjectId,
-    wineId: Schema.Types.ObjectId
-}
-
-const sampleSchema = new Schema<ISample>({
-    name: { type: String, required: true },
+const sampleSchema = new Schema({
+    name: { type: String, required: false },
     rating: { type: Number, required: false },
     champion: { type: Boolean, required: true, default: false },
     catalogueId: { type: Schema.Types.ObjectId, ref: "Catalogue" },
@@ -17,3 +9,5 @@ const sampleSchema = new Schema<ISample>({
 });
 
 export const Sample = model<ISample>("Sample", sampleSchema);
+
+export type ISample = InferSchemaType<typeof sampleSchema> & Partial<{ _id: Types.ObjectId }>; 
