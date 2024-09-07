@@ -119,4 +119,12 @@ export class CatalogueRepository {
     addParticipatedWinary = async (catalogueId: string, winaryId: string) => {
         await Catalogue.updateOne({ _id: catalogueId }, { $push: { participatedWineries: winaryId } });
     }
+
+    addCatalogueImages = async (catalogueId: string, imageUrls: string[]) => {
+        await Catalogue.updateOne({ _id: catalogueId }, { $push: { imageUrl: { $each: imageUrls } } });
+    }
+
+    deleteCatalogueImage = async (catalogueId: string, imageUrl: string) => {
+        await Catalogue.updateOne({ _id: catalogueId }, { $pull: { imageUrl: imageUrl } });
+    }
 }

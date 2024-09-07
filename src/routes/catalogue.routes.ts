@@ -2,6 +2,8 @@ import { Router } from "express";
 import { CatalogueController } from "../controllers/CatalogueController";
 import catchAsync from "../utils/catchAsync";
 import { auth } from "../middleware/auth";
+import { getMulterUpload } from "../middleware/multer";
+import { get } from "http";
 
 const catalogueRouter = Router();
 const catalogueController = new CatalogueController();
@@ -31,6 +33,10 @@ catalogueRouter.route("/:id/samples")
 catalogueRouter.route("/:id/wineries")
     .get(catchAsync(catalogueController.getParticipatedWineries))
     .post(auth, catchAsync(catalogueController.addParticipatedWinery))
+
+catalogueRouter.route("/:id/images")
+    .post(auth, getMulterUpload("catalogueImages", true), catchAsync(catalogueController.uploadCatalogueImages))
+    .delete(auth, catchAsync(catalogueController.deleteCatalogueImage))
 
 catalogueRouter.route("/samples/:id")
     .get(catchAsync(catalogueController.getCatalogueSampleDetail))

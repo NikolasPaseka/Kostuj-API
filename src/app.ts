@@ -47,11 +47,12 @@ app.use("/mapLocations", mapLocationRouter);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));     
 
+
 app.all('*', (req, res) => {
     res.statusCode = 404;
     res.json({
         "error": "Not found",
-        "code": 400
+        "code": 404
     });
 });
 

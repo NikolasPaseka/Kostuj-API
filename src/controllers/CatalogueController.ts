@@ -9,6 +9,7 @@ import { ICatalogue } from "../models/Catalogue";
 import { WineRepository } from "../repositories/WineRepository";
 import { WinaryRepository } from "../repositories/WinaryRepository";
 import { IUser } from "../models/User";
+import { handleDeleteImage, handleImagesUpload, handleImageUpload } from "../utils/handleImageUpload";
 
 export class CatalogueController {
 
@@ -136,5 +137,40 @@ export class CatalogueController {
 
         await this.catalogueRepository.addParticipatedWinary(id, winery.id);
         res.json({ "message": "Winery added" });
+    }
+
+    uploadCatalogueImages = async (req: TokenRequest, res: Response) => {
+        const userId: ObjectId = req.token._id;
+        const catalogueId: string = req.params.id;
+        const catalogueImages= req.files as Express.Multer.File[];
+
+        if (catalogueImages == null) {
+            throw new ResponseError("No image provided", 400);
+        }
+
+        const catalogue = await this.catalogueRepository.getCatalogueDetail(catalogueId);
+        
+        // get the last number of the image url
+        const imageNumbers = catalogue.imageUrl?.map(x => parseInt(x[x.length - 1]) || 0) || [];
+
+        const imageUrls = await handleImagesUpload(
+            catalogueId.toString(),
+            Math.max(...imageNumbers) ?? 0,
+            "kostuj_catalogues",
+            catalogueImages
+        );
+
+        this.catalogueRepository.addCatalogueImages(catalogueId, imageUrls);
+        res.json(imageUrls);
+    }
+
+    deleteCatalogueImage = async (req: TokenRequest, res: Response) => {
+        const { id } = req.params;
+        const imageUrl: string = req.body.imageUrl;
+
+        await handleDeleteImage(imageUrl, "kostuj_catalogues");
+
+        await this.catalogueRepository.deleteCatalogueImage(id, imageUrl);
+        res.json({ "message": "Image deleted" });
     }
 }
