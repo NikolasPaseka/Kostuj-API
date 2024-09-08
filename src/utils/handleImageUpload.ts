@@ -34,13 +34,13 @@ export const handleImageUpload = async (
  */
 export const handleImagesUpload = async (
     imageName: string,
-    imageNumber: number,
+    imageHash: string,
     folder: string,
     images: Express.Multer.File[]
 ): Promise<string[]> => {
     const uploadPromises = images.map((image, index) => {
         const options = {
-            public_id: `${imageName}_${imageNumber + index}`,
+            public_id: `${imageName}_${imageHash + index}`,
             use_filename: false,
             unique_filename: true,
             overwrite: true,

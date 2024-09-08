@@ -127,4 +127,8 @@ export class CatalogueRepository {
     deleteCatalogueImage = async (catalogueId: string, imageUrl: string) => {
         await Catalogue.updateOne({ _id: catalogueId }, { $pull: { imageUrl: imageUrl } });
     }
+
+    deleteSamplesByCatalogueId = async (catalogueId: string): Promise<void> => {
+        await Sample.deleteMany({ catalogueId: catalogueId });
+    }
 }

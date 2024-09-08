@@ -10,6 +10,7 @@ import { WineRepository } from "../repositories/WineRepository";
 import { WinaryRepository } from "../repositories/WinaryRepository";
 import { IUser } from "../models/User";
 import { handleDeleteImage, handleImagesUpload, handleImageUpload } from "../utils/handleImageUpload";
+import { generateRandomHash } from "../utils/randomHash";
 
 export class CatalogueController {
 
@@ -105,6 +106,13 @@ export class CatalogueController {
         if (catalogue.adminId != adminId) {
             throw new ResponseError("Invalid admin id", 401);
         }
+        catalogue.imageUrl?.forEach(async (imageUrl) => {
+            this.catalogueRepository.deleteCatalogueImage(id, imageUrl);
+            handleDeleteImage(imageUrl, "kostuj_catalogues");
+        });
+
+        // Delete all samples associated with this catalogue
+        this.catalogueRepository.deleteSamplesByCatalogueId(id);
 
         await this.catalogueRepository.deleteCatalogue(id, adminId);
         res.json({ "message": "Catalogue deleted" });
@@ -148,14 +156,9 @@ export class CatalogueController {
             throw new ResponseError("No image provided", 400);
         }
 
-        const catalogue = await this.catalogueRepository.getCatalogueDetail(catalogueId);
-        
-        // get the last number of the image url
-        const imageNumbers = catalogue.imageUrl?.map(x => parseInt(x[x.length - 1]) || 0) || [];
-
         const imageUrls = await handleImagesUpload(
             catalogueId.toString(),
-            Math.max(...imageNumbers) ?? 0,
+            generateRandomHash(),
             "kostuj_catalogues",
             catalogueImages
         );
