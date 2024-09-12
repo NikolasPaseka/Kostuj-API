@@ -3,6 +3,8 @@ import { IWinary } from "../models/Winary";
 import { WinaryRepository } from "../repositories/WinaryRepository";
 import { TokenRequest } from "../middleware/auth";
 import { ObjectId } from "mongoose";
+import { ResponseError } from "../utils/ResponseError";
+import { handleDeleteImage, handleImageUpload } from "../utils/handleImageUpload";
 
 export class WinaryController {
     private winaryRepository = new WinaryRepository();
@@ -26,5 +28,34 @@ export class WinaryController {
 
         const adminCatalogues = await this.winaryRepository.getCataloguesByAdmin(adminId);
         res.json(adminCatalogues);
+    }
+
+    uploadWineryImage = async (req: TokenRequest, res: Response) => {
+        const wineryId = req.params.id;
+        const image = req.file as Express.Multer.File;
+
+        if (image == null) { throw new ResponseError("No image provided", 400); }
+
+        const winery = await this.winaryRepository.getWineryDetail(wineryId);
+        if (winery == null) { throw new ResponseError("Winery not found", 404); }
+
+        const imageUrl = await handleImageUpload(
+            winery.id,
+            "kostuj_wineries",
+            image
+        );
+
+        this.winaryRepository.updateImage(wineryId, imageUrl);
+        res.json(imageUrl);
+    }
+
+    deleteWineryImage = async (req: TokenRequest, res: Response) => {
+        const { id } = req.params;
+        const imageUrl: string = req.body.imageUrl;
+        
+        await this.winaryRepository.deleteWineryImage(id);
+        await handleDeleteImage(imageUrl, "kostuj_wineries");
+        
+        res.json({ "message": "Image deleted" });
     }
 }

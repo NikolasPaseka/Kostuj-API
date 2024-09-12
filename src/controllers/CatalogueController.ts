@@ -11,6 +11,7 @@ import { WinaryRepository } from "../repositories/WinaryRepository";
 import { IUser } from "../models/User";
 import { handleDeleteImage, handleImagesUpload, handleImageUpload } from "../utils/handleImageUpload";
 import { generateRandomHash } from "../utils/randomHash";
+import { IWine } from "../models/Wine";
 
 export class CatalogueController {
 
@@ -137,14 +138,52 @@ export class CatalogueController {
         const winery: WineryDomain = req.body;
 
         if (winery.id == null || winery.id.length == 0) {
-            //throw new ResponseError("Invalid winary id", 400);
             const newWinery = await this.wineryRepository.createWinary(winery);
             await this.catalogueRepository.addParticipatedWinary(id, newWinery._id.toString());
-            return res.json({ "message": "Winery added & created" });
+            return res.json(newWinery);
+        }
+        const participatedWineries = await this.catalogueRepository.getParticipatedWineries(id);
+        if (participatedWineries.map(winery => winery.id).includes(winery.id)) {
+            throw new ResponseError("Winery already participated", 400);
         }
 
         await this.catalogueRepository.addParticipatedWinary(id, winery.id);
-        res.json({ "message": "Winery added" });
+        res.json(winery);
+    }
+
+    removeParticipatedWinery = async (req: TokenRequest, res: Response) => {
+        const { id } = req.params;
+        const wineryToRemove: WineryDomain = req.body;
+
+        if (wineryToRemove.id == null) {
+            throw new ResponseError("Invalid winery id", 400);
+        }
+        
+        const participatedWineries = await this.catalogueRepository.getParticipatedWineries(id);
+        if (!participatedWineries?.map(winery => winery.id).includes(wineryToRemove.id)) {
+            throw new ResponseError("Winery not participated", 400);
+        }
+        const catalogueSamples = await this.catalogueRepository.getCatalogueSamples(id);
+        const samplesToRemove = catalogueSamples.filter(sample => {
+            const wine = sample.wineId as IWine | undefined;
+            const winery = wine?.winaryId as IWinary | undefined;
+            if (wine != undefined && winery != undefined) {
+                return winery._id?.toString() == wineryToRemove.id;
+            } else {
+                return false;
+            }
+        });
+        console.log(`catalogue samples: ${catalogueSamples.length}`);
+        console.log(`samples to remove: ${samplesToRemove.length}`);
+    
+        //Remove the identified samples from the catalogue
+        for (const sample of samplesToRemove) {
+            await this.catalogueRepository.deleteSample(sample._id.toString());
+        }
+    
+        // Remove the winery from the catalogue
+        await this.catalogueRepository.removeParticipatedWinary(id, wineryToRemove.id);
+        res.json({ message: "Winery and associated samples removed successfully" });
     }
 
     uploadCatalogueImages = async (req: TokenRequest, res: Response) => {
@@ -175,5 +214,12 @@ export class CatalogueController {
 
         await this.catalogueRepository.deleteCatalogueImage(id, imageUrl);
         res.json({ "message": "Image deleted" });
+    }
+
+    deleteCatalogueSample = async (req: TokenRequest, res: Response) => {
+        const { id } = req.params;
+
+        await this.catalogueRepository.deleteSample(id);
+        res.json({ "message": "Sample deleted" });
     }
 }

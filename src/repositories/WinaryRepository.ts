@@ -24,4 +24,12 @@ export class WinaryRepository {
     async createWinary(winery: WineryDomain) {
         return await new Winary(winery).save();
     }
+
+    async updateImage(wineryId: string, imageUrl: string) {
+        return await Winary.updateOne({ _id: wineryId}, { imageUrl: imageUrl });
+    }
+
+    async deleteWineryImage(wineryId: string) {
+        return await Winary.updateOne({ _id: wineryId }, { imageUrl: null });
+    }
 }

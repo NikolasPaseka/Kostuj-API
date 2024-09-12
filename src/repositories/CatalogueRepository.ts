@@ -37,17 +37,17 @@ export class CatalogueRepository {
         return Sample.find({
             catalogueId: catalogueId
         })
-            .populate({
-                path: "wineId",
-                model: Wine,
-                populate: [{
-                    path: "winaryId",
-                    model: Winary
-                }, {
-                    path: "grapeVarietals",
-                    model: GrapeVarietal
-                }]
-            });
+        .populate({
+            path: "wineId",
+            model: Wine,
+            populate: [{
+                path: "winaryId",
+                model: Winary
+            }, {
+                path: "grapeVarietals",
+                model: GrapeVarietal
+            }]
+        });
     }
 
     async getCatalogueSampleDetail(id: string) {
@@ -120,6 +120,10 @@ export class CatalogueRepository {
         await Catalogue.updateOne({ _id: catalogueId }, { $push: { participatedWineries: winaryId } });
     }
 
+    removeParticipatedWinary = async (catalogueId: string, winaryId: string) => {
+        await Catalogue.updateOne({ _id: catalogueId }, { $pull: { participatedWineries: winaryId } });
+    }
+
     addCatalogueImages = async (catalogueId: string, imageUrls: string[]) => {
         await Catalogue.updateOne({ _id: catalogueId }, { $push: { imageUrl: { $each: imageUrls } } });
     }
@@ -130,5 +134,9 @@ export class CatalogueRepository {
 
     deleteSamplesByCatalogueId = async (catalogueId: string): Promise<void> => {
         await Sample.deleteMany({ catalogueId: catalogueId });
+    }
+
+    deleteSample = async (sampleId: string): Promise<void> => {
+        await Sample.deleteOne({ _id: sampleId });
     }
 }
