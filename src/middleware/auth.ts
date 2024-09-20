@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ObjectId } from 'mongoose';
 
 import { load } from 'ts-dotenv';
+import { ResponseError } from '../utils/ResponseError';
 
 export const authEnv = load({
     ACCESS_TOKEN_SECRET: String,
@@ -33,7 +34,8 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
         next();
     } catch (err) {
-        res.status(401).send('Please authenticate');
+        const error = new ResponseError("Please authenticate", 401);
+        res.status(error.statusCode ?? 400).json(error);
     }
 }
 

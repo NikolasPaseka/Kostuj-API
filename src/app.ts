@@ -13,6 +13,7 @@ import userRouter from "./routes/user.routes";
 import mapLocationRouter from "./routes/mapLocation.routes";
 import catalogueRouter from "./routes/catalogue.routes";
 import wineRouter from "./routes/wines.routes";
+import { ResponseError } from "./utils/ResponseError";
 
 const env = load({
     PORT: Number,
@@ -49,11 +50,9 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 app.all('*', (req, res) => {
+    const error = new ResponseError("Not found", 404);
     res.statusCode = 404;
-    res.json({
-        "error": "Not found",
-        "code": 404
-    });
+    res.json(error);
 });
 
 app.use(errorHandler);
