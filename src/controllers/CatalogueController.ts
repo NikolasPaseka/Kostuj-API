@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-
+import fs from "fs";
 import { CatalogueRepository } from "../repositories/CatalogueRepository";
 import { ResponseError } from "../utils/ResponseError";
-import {IWinary, WineryDomain} from "../models/Winary";
+import {IWinary, Winary, WineryDomain} from "../models/Winary";
 import { TokenRequest } from "../middleware/auth";
 import mongoose, { Mongoose, ObjectId } from "mongoose";
 import { ICatalogue } from "../models/Catalogue";
@@ -12,11 +12,13 @@ import { IUser } from "../models/User";
 import { handleDeleteImage, handleImagesUpload, handleImageUpload } from "../utils/handleImageUpload";
 import { generateRandomHash } from "../utils/randomHash";
 import { IWine } from "../models/Wine";
+import { ISample, Sample } from "../models/Sample";
 
 export class CatalogueController {
 
     private catalogueRepository = new CatalogueRepository();
     private wineryRepository = new WinaryRepository();
+    private wineRepository = new WineRepository();
 
     getCatalogues = async (req: Request, res: Response) => {
         let page: number = parseInt(req.query.page as string);
@@ -221,5 +223,52 @@ export class CatalogueController {
 
         await this.catalogueRepository.deleteSample(id);
         res.json({ "message": "Sample deleted" });
+    }
+
+    importContentData = async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const { wineries, samples } = req.body;
+        const savedWineries: (IWinary & { importedId: number })[] = [];
+
+        //delete all participated TODO DELETE LATER
+        const catalogue = await this.catalogueRepository.getCatalogueDetail(id);
+        if (catalogue.participatedWineries != null) {
+            Winary.deleteMany({ _id: { $in: [...catalogue.participatedWineries] } });
+            this.catalogueRepository.deleteAllParticipatedWineries(id);
+        }
+        ////////////////////////////////
+
+        const savePromises = wineries.map(async (winery) => {
+            const savedWinery = await this.wineryRepository.createWinary(winery);
+            this.catalogueRepository.addParticipatedWinary(id, savedWinery._id.toString());
+            savedWineries.push({ 
+                ...savedWinery.toObject(),
+                importedId: winery.id
+            });
+        });
+        await Promise.all(savePromises);
+
+        // Delete all samples
+        this.catalogueRepository.deleteSamplesByCatalogueId(id);
+
+        // Create new samples
+        const samplesToCreate: ISample[] = [];
+        const savedSamplesPromises = samples.map(async (sample) => {
+            const wine = sample.wineId as IWine;
+            const wineryId = wine.winaryId as unknown as number;
+            const foundWineryId = savedWineries.find(winery => winery.importedId == wineryId)?._id;
+            
+            if (foundWineryId == null) { return; }
+
+            wine.winaryId = foundWineryId;
+            const savedWine = await this.wineRepository.createWine(wine);
+            sample.wineId = savedWine._id;
+            samplesToCreate.push(sample);
+        });
+
+        await Promise.all(savedSamplesPromises);
+        await Sample.insertMany(samplesToCreate);
+
+        res.json({ "message": "Data imported" });
     }
 }

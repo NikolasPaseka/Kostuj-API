@@ -35,6 +35,9 @@ catalogueRouter.route("/:id/wineries")
     .post(auth, catchAsync(catalogueController.addParticipatedWinery))
     .delete(auth, catchAsync(catalogueController.removeParticipatedWinery))
 
+catalogueRouter.route("/:id/importContentData")
+    .post(catchAsync(catalogueController.importContentData))
+
 catalogueRouter.route("/:id/images")
     .post(auth, getMulterUpload("catalogueImages", true), catchAsync(catalogueController.uploadCatalogueImages))
     .delete(auth, catchAsync(catalogueController.deleteCatalogueImage))

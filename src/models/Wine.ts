@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 import { IGrapeVarietal } from "./GrapeVarietal";
 
 export interface IWine {
@@ -14,7 +14,7 @@ export interface IWine {
     productionMethod?: string,
     grapeVarietals?: [IGrapeVarietal],
     imageUrl?: string,
-    winaryId: Schema.Types.ObjectId
+    winaryId: Types.ObjectId
 }
 
 const wineSchema = new Schema<IWine>({
