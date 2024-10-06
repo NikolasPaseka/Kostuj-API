@@ -1,7 +1,7 @@
 import { ObjectId } from "mongoose";
 import { Catalogue, ICatalogue } from "../models/Catalogue";
 import { GrapeVarietal } from "../models/GrapeVarietal";
-import { Sample } from "../models/Sample";
+import { ISample, Sample } from "../models/Sample";
 import { IWinary, Winary } from "../models/Winary";
 import { IWine, Wine } from "../models/Wine";
 import { ResponseError } from "../utils/ResponseError";
@@ -34,7 +34,7 @@ export class CatalogueRepository {
     }
 
     async getCatalogueSamples(catalogueId: string) {
-        return Sample.find({
+        return await Sample.find({
             catalogueId: catalogueId
         })
         .populate({
@@ -51,7 +51,7 @@ export class CatalogueRepository {
     }
 
     async getCatalogueSampleDetail(id: string) {
-        return Sample.findById(id)
+        return await Sample.findById(id)
         .populate({ 
             path: "wineId", 
             model: Wine,
@@ -73,7 +73,7 @@ export class CatalogueRepository {
 
         const wineResults = await Wine.find().where("_id").in(wineIds);
         let wineriesIds: string[] = [];
-        wineResults.map(x => { wineriesIds.push(x.winaryId.toString()) });
+        wineResults.map(x => { wineriesIds.push(x.winaryId?.toString() ?? "") });
 
         wineriesIds = wineriesIds.filter(this.onlyUnique);
         let firstSet = await Winary.find().where("_id").in(wineriesIds);
@@ -120,6 +120,10 @@ export class CatalogueRepository {
         await Catalogue.updateOne({ _id: catalogueId }, { $push: { participatedWineries: winaryId } });
     }
 
+    addParticipatedWineries = async (catalogueId: string, winaryIds: string[]) => {
+        await Catalogue.updateOne({ _id: catalogueId }, { $push: { participatedWineries: { $each: winaryIds } } });
+    }
+
     removeParticipatedWinary = async (catalogueId: string, winaryId: string) => {
         await Catalogue.updateOne({ _id: catalogueId }, { $pull: { participatedWineries: winaryId } });
     }
@@ -142,5 +146,65 @@ export class CatalogueRepository {
 
     deleteSample = async (sampleId: string): Promise<void> => {
         await Sample.deleteOne({ _id: sampleId });
+    }
+
+    // import and export
+    importContentData = async (catalogueId: string, wineries: any, samples: any) => {
+        const savedWineries: (IWinary & { importedId: number })[] = [];
+
+        //delete all participated TODO DELETE LATER
+        const catalogue = await this.getCatalogueDetail(catalogueId);
+        if (catalogue.participatedWineries != null) {
+            const res = await Winary.deleteMany({ _id: { $in: [...catalogue.participatedWineries] } });
+            console.log(res.deletedCount);
+            this.deleteAllParticipatedWineries(catalogueId);
+        }
+        ////////////////////////////////
+
+        const wineriesResult = await Winary.insertMany(wineries);
+        const test = wineriesResult[89].toObject() as IWinary;
+        console.log(test.name);
+        console.log(test._id)
+        console.log(wineries[89].name)
+
+        wineriesResult.forEach((winery, index) => {
+            const savedWinery = winery.toObject() as IWinary;
+            if (savedWinery._id != null) {
+                this.addParticipatedWinary(catalogueId, savedWinery._id.toString());
+            }
+           
+            const importedWinery = wineries[index];
+            if (importedWinery == null || importedWinery.name != savedWinery.name) { return; }
+            savedWineries.push({
+                ...winery.toObject(),
+                importedId: wineries[index].id
+            })
+        });
+
+        // Delete all samples
+        this.deleteSamplesByCatalogueId(catalogueId);
+
+        // Create new samples
+        const samplesToSave: ISample[] = [];
+        const winesToSave: IWine[] = [];
+        
+        samples.forEach((sample: { wineId: IWine; }, index: number) => {
+            const wine = sample.wineId as IWine;
+            const wineryId = wine.winaryId as unknown as number;
+            const foundWineryId = savedWineries.find(winery => winery.importedId == wineryId)?._id;
+            if (foundWineryId == null) { return; }
+
+            wine.winaryId = foundWineryId;
+            winesToSave.push(wine);
+        });
+        const insertedWines = await Wine.insertMany(winesToSave);
+
+        samples.forEach((sample: ISample, index: string | number) => {
+            const wine = insertedWines[index] as IWine;
+            const sampleToSave = sample as ISample;
+            sampleToSave.wineId = wine._id;
+            samplesToSave.push(sampleToSave);
+        });
+        await Sample.insertMany(samplesToSave);
     }
 }

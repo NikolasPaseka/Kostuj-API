@@ -11,8 +11,9 @@ import { WinaryRepository } from "../repositories/WinaryRepository";
 import { IUser } from "../models/User";
 import { handleDeleteImage, handleImagesUpload, handleImageUpload } from "../utils/handleImageUpload";
 import { generateRandomHash } from "../utils/randomHash";
-import { IWine } from "../models/Wine";
+import { IWine, Wine } from "../models/Wine";
 import { ISample, Sample } from "../models/Sample";
+import { IGrapeVarietal } from "../models/GrapeVarietal";
 
 export class CatalogueController {
 
@@ -228,47 +229,56 @@ export class CatalogueController {
     importContentData = async (req: Request, res: Response) => {
         const { id } = req.params;
         const { wineries, samples } = req.body;
-        const savedWineries: (IWinary & { importedId: number })[] = [];
-
-        //delete all participated TODO DELETE LATER
-        const catalogue = await this.catalogueRepository.getCatalogueDetail(id);
-        if (catalogue.participatedWineries != null) {
-            Winary.deleteMany({ _id: { $in: [...catalogue.participatedWineries] } });
-            this.catalogueRepository.deleteAllParticipatedWineries(id);
-        }
-        ////////////////////////////////
-
-        const savePromises = wineries.map(async (winery) => {
-            const savedWinery = await this.wineryRepository.createWinary(winery);
-            this.catalogueRepository.addParticipatedWinary(id, savedWinery._id.toString());
-            savedWineries.push({ 
-                ...savedWinery.toObject(),
-                importedId: winery.id
-            });
-        });
-        await Promise.all(savePromises);
-
-        // Delete all samples
-        this.catalogueRepository.deleteSamplesByCatalogueId(id);
-
-        // Create new samples
-        const samplesToCreate: ISample[] = [];
-        const savedSamplesPromises = samples.map(async (sample) => {
-            const wine = sample.wineId as IWine;
-            const wineryId = wine.winaryId as unknown as number;
-            const foundWineryId = savedWineries.find(winery => winery.importedId == wineryId)?._id;
-            
-            if (foundWineryId == null) { return; }
-
-            wine.winaryId = foundWineryId;
-            const savedWine = await this.wineRepository.createWine(wine);
-            sample.wineId = savedWine._id;
-            samplesToCreate.push(sample);
-        });
-
-        await Promise.all(savedSamplesPromises);
-        await Sample.insertMany(samplesToCreate);
+        
+        await this.catalogueRepository.importContentData(id, wineries, samples);
 
         res.json({ "message": "Data imported" });
+    }
+
+    // Auto label
+    autoLabelSamples = async (req: Request, res: Response) => {
+        const start = new Date().getTime();
+
+        const { id } = req.params;
+        const { prefix, order } = req.query;
+
+        console.log(`Auto label samples: ${id}, ${prefix}, ${order}`);
+        
+        const samples = await this.catalogueRepository.getCatalogueSamples(id);
+
+        // Sort by winary name
+        if (order == "byWinery") {
+            samples.sort((a, b) => {
+                const wineryA = (a.wineId as unknown as IWine).winaryId as unknown as IWinary;
+                const wineryB = (b.wineId as unknown as IWine).winaryId as unknown as IWinary;
+                return wineryA.name.localeCompare(wineryB.name);
+            });
+        } else if (order == "byGrape") {
+            samples.sort((a, b) => {
+                const grapesA = (a.wineId as unknown as IWine).grapeVarietals as unknown as IGrapeVarietal[];
+                const grapesB = (b.wineId as unknown as IWine).grapeVarietals as unknown as IGrapeVarietal[];
+                
+                const grapeA = grapesA.length > 0 ? grapesA[0].grape : "";
+                const grapeB = grapesB.length > 0 ? grapesB[0].grape : "";
+                return grapeA.localeCompare(grapeB);
+            });
+        }
+
+        samples.forEach((sample: ISample, index: number) => {
+            sample.name = `${prefix}${index + 1}`;
+        });
+
+        const bulkOperations = samples.map(sample => ({
+            updateOne: {
+                filter: { _id: sample._id },
+                update: { name: sample.name }
+            }
+        }));
+
+        await Sample.bulkWrite(bulkOperations);
+
+        console.log(`Auto label samples took: ${new Date().getTime() - start} ms`);
+    
+        res.json(samples);
     }
 }

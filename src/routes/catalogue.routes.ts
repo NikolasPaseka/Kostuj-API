@@ -38,6 +38,9 @@ catalogueRouter.route("/:id/wineries")
 catalogueRouter.route("/:id/importContentData")
     .post(catchAsync(catalogueController.importContentData))
 
+catalogueRouter.route("/:id/autoLabelSamples")
+    .get(catchAsync(catalogueController.autoLabelSamples))
+
 catalogueRouter.route("/:id/images")
     .post(auth, getMulterUpload("catalogueImages", true), catchAsync(catalogueController.uploadCatalogueImages))
     .delete(auth, catchAsync(catalogueController.deleteCatalogueImage))

@@ -1,23 +1,7 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model, Types, InferSchemaType } from "mongoose";
 import { IGrapeVarietal } from "./GrapeVarietal";
 
-export interface IWine {
-    name: string,
-    color: string,
-    description?: string,
-    year: number,
-    residualSugar?: number,
-    alcoholContent?: number,
-    acidity?: number,
-    grapesSweetness?: number,
-    tasteResult?: string,
-    productionMethod?: string,
-    grapeVarietals?: [IGrapeVarietal],
-    imageUrl?: string,
-    winaryId: Types.ObjectId
-}
-
-const wineSchema = new Schema<IWine>({
+const wineSchema = new Schema({
     name: { type: String, required: true },
     color: { type: String, required: true },
     description: {type: String, default: null },
@@ -38,3 +22,5 @@ const wineSchema = new Schema<IWine>({
 });
 
 export const Wine = model<IWine>("Wine", wineSchema);
+
+export type IWine = InferSchemaType<typeof wineSchema> & Partial<{ _id: Types.ObjectId }>; 
