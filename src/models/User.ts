@@ -2,6 +2,7 @@ import { Schema, model, InferSchemaType, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import { saltRounds } from "../utils/constants";
 import { UserAuthOption } from "./utils/UserAuthOption";
+import { create } from "domain";
 
 const userSchema = new Schema({
     email: {
@@ -19,7 +20,10 @@ const userSchema = new Schema({
         required: true, 
         default: UserAuthOption.Basic,
         enum: UserAuthOption
-    }
+    },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
+    authorizations: [{ type: Number, required: true }]
 });
 
 userSchema.pre("save", async function (next) {

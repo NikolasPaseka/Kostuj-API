@@ -183,6 +183,7 @@ export class CatalogueRepository {
 
         // Delete all samples
         this.deleteSamplesByCatalogueId(catalogueId);
+        await Wine.deleteMany({ name: { $in: [...samples.map(it => (it.wineId as IWine).name)] } });
 
         // Create new samples
         const samplesToSave: ISample[] = [];

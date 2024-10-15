@@ -14,6 +14,7 @@ import { generateRandomHash } from "../utils/randomHash";
 import { IWine, Wine } from "../models/Wine";
 import { ISample, Sample } from "../models/Sample";
 import { IGrapeVarietal } from "../models/GrapeVarietal";
+import { AuthorizationRoles } from "../models/utils/AuthorizationRoles";
 
 export class CatalogueController {
 
@@ -240,10 +241,9 @@ export class CatalogueController {
         const start = new Date().getTime();
 
         const { id } = req.params;
-        const { prefix, order } = req.query;
+        const { prefix, order, colorOrder } = req.query;
+        const parsedColorOrder = (colorOrder as string).split(",");
 
-        console.log(`Auto label samples: ${id}, ${prefix}, ${order}`);
-        
         const samples = await this.catalogueRepository.getCatalogueSamples(id);
 
         // Sort by winary name
@@ -260,6 +260,18 @@ export class CatalogueController {
                 
                 const grapeA = grapesA.length > 0 ? grapesA[0].grape : "";
                 const grapeB = grapesB.length > 0 ? grapesB[0].grape : "";
+                return grapeA.localeCompare(grapeB);
+            });
+        } else if (order == "byGrapeColor") {
+            samples.sort((a, b) => {
+                const grapeA: string = (a.wineId as unknown as IWine).color
+                const grapeB: string = (b.wineId as unknown as IWine).color
+            
+                if (parsedColorOrder.includes(grapeA) && parsedColorOrder.includes(grapeB)) {
+                    if (parsedColorOrder.indexOf(grapeA) < parsedColorOrder.indexOf(grapeB)) return -1;
+                    if (parsedColorOrder.indexOf(grapeA) > parsedColorOrder.indexOf(grapeB)) return 1;
+                    return 0;
+                }
                 return grapeA.localeCompare(grapeB);
             });
         }
