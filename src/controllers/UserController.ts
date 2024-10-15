@@ -11,6 +11,7 @@ import { ITastedSample } from "../models/TastedSample";
 import { UserAuthOption } from "../models/utils/UserAuthOption";
 import { ObjectId } from "mongoose";
 import { handleImageUpload } from "../utils/handleImageUpload";
+import { AuthorizationRoles } from "../models/utils/AuthorizationRoles";
 
 export class UserController {
     private userRepository = new UserRepository();
@@ -24,7 +25,8 @@ export class UserController {
             id: userId,
             email: user.email,
             accessToken: accessToken,
-            refreshToken: refreshToken
+            refreshToken: refreshToken,
+            authorizations: user.authorizations
         });
     }
 
@@ -86,7 +88,10 @@ export class UserController {
                 firstName: firstName,
                 lastName: lastName,
                 accountOption: UserAuthOption.Google,
-                refreshTokens: []
+                refreshTokens: [],
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                authorizations: [AuthorizationRoles.USER]
             });
             if (createdUser == null) {
                 throw new ResponseError("Error creating user", 400);
@@ -238,5 +243,11 @@ export class UserController {
 
         await this.userRepository.deleteTastedSamples(tastedSamples, userId);
         res.json("Successfuly deleted");
+    }
+
+    // Super Admin Part
+    getUsers = async (req: TokenRequest, res: Response) => {
+        const users = await this.userRepository.getAllUsers();
+        res.json(users);
     }
 }

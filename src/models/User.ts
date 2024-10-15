@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { saltRounds } from "../utils/constants";
 import { UserAuthOption } from "./utils/UserAuthOption";
 import { create } from "domain";
+import { AuthorizationRoles } from "./utils/AuthorizationRoles";
 
 const userSchema = new Schema({
     email: {
@@ -23,7 +24,7 @@ const userSchema = new Schema({
     },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
-    authorizations: [{ type: Number, required: true }]
+    authorizations: [{ type: Number, default: [AuthorizationRoles.USER] }]
 });
 
 userSchema.pre("save", async function (next) {

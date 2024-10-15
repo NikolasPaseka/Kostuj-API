@@ -8,6 +8,9 @@ import { multerUpload } from "../middleware/multer";
 const userRouter = Router();
 const userController = new UserController();
 
+userRouter.route("/")
+    .get(auth, catchAsync(userController.getUsers))
+
 userRouter.route("/login")
     .post(catchAsync(userController.login))
 

@@ -1,4 +1,6 @@
 export enum AuthorizationRoles {
-    ADMIN = 101,
-    USER = 102,
+    SUPER_ADMIN = 100,
+    ADMIN = 200,
+    WINERY = 300,
+    USER = 400
 }

@@ -9,6 +9,10 @@ import { ResponseError } from "../utils/ResponseError";
 
 export class UserRepository {
 
+    async getAllUsers() {
+        return await User.find().select("-password");
+    }
+
     async getUserByEmail(email: string) {
         return await User.findOne({ email });
     }
@@ -23,6 +27,8 @@ export class UserRepository {
 
     async createUser(userData: IUser) {
         // check if user already exists
+        userData.createdAt = new Date();
+        userData.updatedAt = new Date();
         const res = await this.getUserByEmail(userData.email);
         if (res) {
             throw new ResponseError("User with this email address already exists");
