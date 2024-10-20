@@ -2,7 +2,7 @@ import { Router } from "express";
 import { UserController } from "../controllers/UserController";
 
 import catchAsync from "../utils/catchAsync";
-import { auth } from "../middleware/auth";
+import { auth, authSuperAdmin } from "../middleware/auth";
 import { multerUpload } from "../middleware/multer";
 
 const userRouter = Router();
@@ -40,6 +40,13 @@ userRouter.route("/commissionCatalogues")
 
 userRouter.route("/:id")
     .get(auth, catchAsync(userController.getUserById))
+
+//TODO DELETE
+userRouter.route("/resetPassword")
+    .post(authSuperAdmin, catchAsync(userController.resetPassowrd))
+
+userRouter.route("/:id/authorizations")
+    .put(authSuperAdmin, catchAsync(userController.updateUserAuthorizations))
 
 userRouter.route("/commissionCatalogues/ratedSamples/:catalogueId")
     .get(auth, catchAsync(userController.getRatedSamples))

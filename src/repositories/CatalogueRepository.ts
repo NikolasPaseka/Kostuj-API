@@ -5,6 +5,7 @@ import { ISample, Sample } from "../models/Sample";
 import { IWinary, Winary } from "../models/Winary";
 import { IWine, Wine } from "../models/Wine";
 import { ResponseError } from "../utils/ResponseError";
+import { User } from "../models/User";
 
 
 export class CatalogueRepository {
@@ -26,7 +27,12 @@ export class CatalogueRepository {
     }
 
     async getCatalogueDetail(catalogueId: string) {
-        const catalogue = await Catalogue.findById(catalogueId);
+        const catalogue = await Catalogue.findById(catalogueId)
+            .populate({ 
+                path: "adminId", 
+                model: User, 
+                select: "firstName lastName" 
+            })
         if (catalogue == null) {
             throw new ResponseError("Catalogue not found", 404);
         }

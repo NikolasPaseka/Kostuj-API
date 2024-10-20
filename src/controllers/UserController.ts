@@ -11,11 +11,12 @@ import { ITastedSample } from "../models/TastedSample";
 import { UserAuthOption } from "../models/utils/UserAuthOption";
 import { ObjectId } from "mongoose";
 import { handleImageUpload } from "../utils/handleImageUpload";
-import { AuthorizationRoles } from "../models/utils/AuthorizationRoles";
+import { AuthorizationManager, AuthorizationRoles } from "../models/utils/AuthorizationRoles";
 
 export class UserController {
     private userRepository = new UserRepository();
     private catalogueRepository = new CatalogueRepository();
+    private authorizationManager = new AuthorizationManager();
 
     private sendLoginResponse = (user: IUser, userId: string, res: Response) => {
         const accessToken = generateAccessToken(userId, user.email);
@@ -249,5 +250,27 @@ export class UserController {
     getUsers = async (req: TokenRequest, res: Response) => {
         const users = await this.userRepository.getAllUsers();
         res.json(users);
+    }
+
+    updateUserAuthorizations = async (req: TokenRequest, res: Response) => {
+        const userId = req.params.id;
+        let authorizations: AuthorizationRoles[] = req.body;
+        for (const auth of authorizations) {
+            if (!this.authorizationManager.isValidRole(auth)) {
+                throw new ResponseError("Invalid authorization role", 400);
+            }
+        }
+        
+        authorizations = this.authorizationManager.prepareAuthorizations(authorizations);
+        await this.userRepository.updateUserAuthorizations(userId, authorizations);
+        res.json("Successfuly updated");
+    }
+
+    // TODO DELETE
+    resetPassowrd = async (req: TokenRequest, res: Response) => {
+        const { userId, newPassword } = req.body;
+
+        await this.userRepository.resetPassword(userId, newPassword);
+        res.json("Successfuly reseted");
     }
 }

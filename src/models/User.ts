@@ -22,9 +22,13 @@ const userSchema = new Schema({
         default: UserAuthOption.Basic,
         enum: UserAuthOption
     },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
-    authorizations: [{ type: Number, default: [AuthorizationRoles.USER] }]
+    createdAt: { type: Date, default: Date.now() },
+    updatedAt: { type: Date, default: Date.now() },
+    authorizations: [{ 
+        type: Number, 
+        default: [AuthorizationRoles.USER], 
+        enum: AuthorizationRoles
+    }]
 });
 
 userSchema.pre("save", async function (next) {
@@ -34,6 +38,15 @@ userSchema.pre("save", async function (next) {
     }
     next()
 });
+
+userSchema.pre("updateOne", async function (next) {
+    const user = this.getUpdate() as { password?: string };
+    if (user.password) {
+        user.password = await bcrypt.hash(user.password, saltRounds);
+    }
+    next()
+});
+
 
 export type IUser = InferSchemaType<typeof userSchema> & Partial<{ _id: Types.ObjectId }>; 
 

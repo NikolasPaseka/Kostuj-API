@@ -180,4 +180,13 @@ export class UserRepository {
             userId: userId
         })
     }
+
+    // Super admins part
+    async updateUserAuthorizations(userId: string, authorizations: number[]) {
+        await User.updateOne({ _id: userId }, { authorizations });
+    }
+
+    async resetPassword(userId: string, newPassword: string) {
+        await User.updateOne({ _id: userId }, { password: newPassword });
+    }
 }
