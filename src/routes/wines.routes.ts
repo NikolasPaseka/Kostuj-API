@@ -11,6 +11,9 @@ wineRouter.route("/")
     .get(catchAsync(wineController.getWines))
     .post(auth, catchAsync(wineController.createWineSample))
 
+wineRouter.route("/samples")
+    .put(auth, catchAsync(wineController.updateWineSamples))
+
 wineRouter.route("/grapeVarietals")
     .get(catchAsync(wineController.getGrapeVarietals))
 

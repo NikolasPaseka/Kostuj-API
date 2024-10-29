@@ -129,7 +129,9 @@ export class CatalogueController {
         const adminId: ObjectId = req.token._id;
 
         const catalogue = await this.catalogueRepository.getCatalogueDetail(id);
-        if (catalogue.adminId != adminId) {
+
+        const adminIdFromCatalogue = (catalogue.adminId as unknown as IUser)?._id;
+        if (!adminIdFromCatalogue || adminIdFromCatalogue.toString() !== adminId.toString()) {
             throw new ResponseError("Invalid admin id", 401);
         }
 

@@ -10,4 +10,4 @@ const sampleSchema = new Schema({
 
 export const Sample = model<ISample>("Sample", sampleSchema);
 
-export type ISample = InferSchemaType<typeof sampleSchema> & Partial<{ _id: Types.ObjectId }>; 
+export type ISample = InferSchemaType<typeof sampleSchema> & Partial<{ _id: Types.ObjectId, id?: string }>; 

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { GrapeVarietal } from "../models/GrapeVarietal";
 import { ISample, Sample } from "../models/Sample";
 import { Winary } from "../models/Winary";
@@ -49,5 +50,15 @@ export class WineRepository {
 
     createWine = async (wine: IWine) => {
         return await new Wine(wine).save()
+    }
+
+    updateWineSamples = async (wineSamples: ISample[]) => {
+        const bulkOps = wineSamples.map(sample => ({
+            updateOne: {
+                filter: { _id: new mongoose.Types.ObjectId(sample.id) },
+                update: { $set: { rating: sample.rating, name: sample.name } }
+            }
+        }));
+        return await Sample.bulkWrite(bulkOps);
     }
 }
