@@ -42,10 +42,19 @@ export class CatalogueController {
     }
 
     getCatalogueDetail = async (req: Request, res: Response) => {
+        //const start = new Date().getTime();
         const { id } = req.params;
         const catalogue = await this.catalogueRepository.getCatalogueDetail(id);
-
-        res.json(catalogue);
+        const participatedWineriesCount = (await this.catalogueRepository.getParticipatedWineries(id)).length;
+        const samplesColorCounts = await this.catalogueRepository.getCatalogueSamplesColorCounts(id);
+        
+        res.json({ 
+            id: catalogue.id, 
+            ...catalogue.toObject(), 
+            participatedWineriesCount, 
+            samplesColorCounts: Object.fromEntries(samplesColorCounts) 
+        });
+        //console.log(`Get catalogue detail took: ${new Date().getTime() - start} ms`);
     }
 
     getCatalogueSamples = async (req: Request, res: Response) => {

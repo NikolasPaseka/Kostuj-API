@@ -6,6 +6,8 @@ import { IWinary, Winary } from "../models/Winary";
 import { IWine, Wine } from "../models/Wine";
 import { ResponseError } from "../utils/ResponseError";
 import { User } from "../models/User";
+import { get } from "http";
+import { WineColorOptions } from "../models/utils/WineColorOptions";
 
 
 export class CatalogueRepository {
@@ -37,6 +39,21 @@ export class CatalogueRepository {
             throw new ResponseError("Catalogue not found", 404);
         }
         return catalogue;
+    }
+
+    getCatalogueSamplesColorCounts = async (catalogueId: string) => {
+        const samples = await this.getCatalogueSamples(catalogueId);
+        const colorCounts = new Map<string, number>([
+            [WineColorOptions.RED, 0],
+            [WineColorOptions.WHITE, 0],
+            [WineColorOptions.ROSE, 0]
+        ]);
+        samples.forEach(sample => {
+            const wine = sample.wineId as unknown as IWine;
+            if (wine.color == null) { return; }
+            colorCounts.set(wine.color, (colorCounts.get(wine.color) ?? 0) + 1);
+        });
+        return colorCounts;
     }
 
     async getCatalogueSamples(catalogueId: string) {
