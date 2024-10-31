@@ -40,24 +40,9 @@ export class WineController {
 
     // Admins part
     createWineSample = async (req: Request, res: Response) => {
-        const createWine = parseBoolean(req.query.createWine as string);
-        let wineSample: ISample;
-        let wine: IWine;
-        if (createWine) {
-            console.log("Creating also wine");
-            wine = req.body.wine;
-            wineSample = req.body.sample;
-            const createdWine = await this.wineRepository.createWine(wine);
-            wineSample.wineId = createdWine.id
-            console.log(wineSample)
-        } else {
-            console.log("Creating only sample");
-            console.log(req.body)
-            wineSample = req.body;
-        }
-        wineSample = await this.wineRepository.createWineSample(wineSample);
+        const { sample, wine, selectedWineryId }: { sample: ISample; wine: IWine; selectedWineryId: string } = req.body;
 
-        const newWineSample = await this.wineRepository.createWineSample(wineSample);
+        const newWineSample = await this.wineRepository.createWineSample(sample, wine, selectedWineryId);
         const responseData = await this.wineRepository.getSampleDetail(newWineSample.id);
 
         res.json(responseData);

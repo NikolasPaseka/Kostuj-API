@@ -1,5 +1,5 @@
 import { Schema, model, Types, InferSchemaType } from "mongoose";
-import { IGrapeVarietal } from "./GrapeVarietal";
+import { GrapeVarietal, IGrapeVarietal } from "./GrapeVarietal";
 
 const wineSchema = new Schema({
     name: { type: String, required: true },
@@ -16,7 +16,7 @@ const wineSchema = new Schema({
     grapesSweetness: { type: Number },
     tasteResult: { type: String },
     productionMethod: { type: String },
-    grapeVarietals: [{ type: Schema.Types.ObjectId, ref: "GrapeVarietal" }],
+    grapeVarietals: [{ grape: String }],
     imageUrl: { type: String, required: false },
     winaryId: { type: Schema.Types.ObjectId, ref: "Winary" }
 });

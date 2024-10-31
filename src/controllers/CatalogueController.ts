@@ -117,9 +117,9 @@ export class CatalogueController {
         const adminId: ObjectId = req.token._id;
 
         const catalogue = await this.catalogueRepository.getCatalogueDetail(id);
-        if (catalogue.adminId != adminId) {
-            throw new ResponseError("Invalid admin id", 401);
-        }
+        // if (catalogue.adminId != adminId) {
+        //     throw new ResponseError("Invalid admin id", 401);
+        // }
         catalogue.imageUrl?.forEach(async (imageUrl) => {
             this.catalogueRepository.deleteCatalogueImage(id, imageUrl);
             handleDeleteImage(imageUrl, "kostuj_catalogues");

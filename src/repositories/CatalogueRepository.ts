@@ -63,13 +63,10 @@ export class CatalogueRepository {
         .populate({
             path: "wineId",
             model: Wine,
-            populate: [{
+            populate: {
                 path: "winaryId",
                 model: Winary
-            }, {
-                path: "grapeVarietals",
-                model: GrapeVarietal
-            }]
+            }
         });
     }
 
@@ -78,13 +75,10 @@ export class CatalogueRepository {
         .populate({ 
             path: "wineId", 
             model: Wine,
-            populate: [{
+            populate: {
                 path: "winaryId",
                 model: Winary
-            }, {
-                path: "grapeVarietals",
-                model: GrapeVarietal
-            }]
+            }
         });
     }
 
@@ -185,10 +179,6 @@ export class CatalogueRepository {
         ////////////////////////////////
 
         const wineriesResult = await Winary.insertMany(wineries);
-        const test = wineriesResult[89].toObject() as IWinary;
-        console.log(test.name);
-        console.log(test._id)
-        console.log(wineries[89].name)
 
         wineriesResult.forEach((winery, index) => {
             const savedWinery = winery.toObject() as IWinary;
@@ -206,7 +196,7 @@ export class CatalogueRepository {
 
         // Delete all samples
         this.deleteSamplesByCatalogueId(catalogueId);
-        await Wine.deleteMany({ name: { $in: [...samples.map(it => (it.wineId as IWine).name)] } });
+        //await Wine.deleteMany({ name: { $in: [...samples.map(it => (it.wineId as IWine).name)] } });
 
         // Create new samples
         const samplesToSave: ISample[] = [];

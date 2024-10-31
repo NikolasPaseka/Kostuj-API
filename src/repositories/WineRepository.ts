@@ -5,6 +5,9 @@ import { Winary } from "../models/Winary";
 import { IWine, Wine } from "../models/Wine";
 
 export class WineRepository {
+    private checkExistedWine = (wine: IWine, wineList: IWine[]): IWine | null => {
+        return wineList.find(w => w.name === wine.name && w.year === wine.year) ?? null;
+    }
 
     async getWines() {
         return await Wine.find({});
@@ -28,9 +31,6 @@ export class WineRepository {
             populate: [{
                 path: "winaryId",
                 model: Winary
-            }, {
-                path: "grapeVarietals",
-                model: GrapeVarietal
             }]
         });
     }
@@ -44,7 +44,18 @@ export class WineRepository {
     }
 
     // Admins part
-    createWineSample = async (wineSample: ISample) => {
+    createWineSample = async (wineSample: ISample, wine: IWine, wineryId: string) => {
+        // When creating wine sample, firstly check if the wine is already created
+        const wineryWines = await this.getWinesByWinery(wineryId);
+        const existedWine = this.checkExistedWine(wine, wineryWines);
+
+        if (existedWine) {
+            wineSample.wineId = existedWine._id;
+        } else {
+            const createdWine = await this.createWine(wine);
+            wineSample.wineId = createdWine.id;
+        }
+
         return await new Sample(wineSample).save()
     }
 
