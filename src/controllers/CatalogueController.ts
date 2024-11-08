@@ -238,11 +238,12 @@ export class CatalogueController {
         res.json({ "message": "Sample deleted" });
     }
 
-    importContentData = async (req: Request, res: Response) => {
+    importContentData = async (req: TokenRequest, res: Response) => {
+        const adminId = req.token._id.toString();
         const { id } = req.params;
         const { wineries, samples } = req.body;
         
-        await this.catalogueRepository.importContentData(id, wineries, samples);
+        await this.catalogueRepository.importContentData(id, wineries, samples, adminId);
 
         res.json({ "message": "Data imported" });
     }

@@ -3,6 +3,7 @@ import { InferSchemaType, Schema, Types, model } from "mongoose";
 const sampleSchema = new Schema({
     name: { type: String, required: false },
     rating: { type: Number, required: false },
+    ratingCommission: { type: Number, required: false },
     champion: { type: Boolean, required: true, default: false },
     note: { type: String, required: false },
     catalogueId: { type: Schema.Types.ObjectId, ref: "Catalogue" },

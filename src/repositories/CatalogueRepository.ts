@@ -2,15 +2,19 @@ import { ObjectId } from "mongoose";
 import { Catalogue, ICatalogue } from "../models/Catalogue";
 import { GrapeVarietal } from "../models/GrapeVarietal";
 import { ISample, Sample } from "../models/Sample";
-import { IWinary, Winary } from "../models/Winary";
-import { IWine, Wine } from "../models/Wine";
+import { IWinary, Winary, WineryUtil } from "../models/Winary";
+import { IWine, Wine, WineUtil } from "../models/Wine";
 import { ResponseError } from "../utils/ResponseError";
 import { User } from "../models/User";
 import { get } from "http";
 import { WineColorOptions } from "../models/utils/WineColorOptions";
+import { WineRepository } from "./WineRepository";
+import { it } from "node:test";
 
 
 export class CatalogueRepository {
+    private wineRepository = new WineRepository();
+
     private onlyUnique(value: any, index: any, self: any) {
         return self.indexOf(value) === index;
       }
@@ -166,59 +170,100 @@ export class CatalogueRepository {
     }
 
     // import and export
-    importContentData = async (catalogueId: string, wineries: any, samples: any) => {
-        const savedWineries: (IWinary & { importedId: number })[] = [];
+    importContentData = async (catalogueId: string, wineries: any, samples: any, adminId: string) => {
+        const startTime = new Date().getTime();
+        type WineryImported = IWinary & { importedId: number };
 
         //delete all participated TODO DELETE LATER
         const catalogue = await this.getCatalogueDetail(catalogueId);
         if (catalogue.participatedWineries != null) {
-            const res = await Winary.deleteMany({ _id: { $in: [...catalogue.participatedWineries] } });
-            console.log(res.deletedCount);
-            this.deleteAllParticipatedWineries(catalogueId);
+            //this.deleteAllParticipatedWineries(catalogueId);
         }
         ////////////////////////////////
+        console.log("wineries: " + wineries.length);
+        let wineriesToSave: WineryImported[] = [];
+        let alreadyCreatedWineries: WineryImported[] = []; 
+        const adminWineries = await Winary.find({ adminId: adminId }).lean();
 
-        const wineriesResult = await Winary.insertMany(wineries);
-
-        wineriesResult.forEach((winery, index) => {
-            const savedWinery = winery.toObject() as IWinary;
-            if (savedWinery._id != null) {
-                this.addParticipatedWinary(catalogueId, savedWinery._id.toString());
+        for (const winery of wineries) {
+            const existingWinery: IWinary | null = WineryUtil.checkWineryExists(adminWineries, winery, adminId);
+            if (existingWinery) {
+                alreadyCreatedWineries.push({ ...existingWinery, importedId: Number(winery.id) });
+            } else {
+                wineriesToSave.push({ ...winery, importedId: Number(winery.id) });
             }
-           
-            const importedWinery = wineries[index];
-            if (importedWinery == null || importedWinery.name != savedWinery.name) { return; }
-            savedWineries.push({
-                ...winery.toObject(),
-                importedId: wineries[index].id
-            })
+        }
+
+        console.log("wineries to save: " + wineriesToSave.length);
+        console.log("Already created wineries: " + alreadyCreatedWineries.length);
+
+        const wineriesResult: IWinary[] = [...(await Winary.insertMany(wineriesToSave)).map(it => it.toObject()), ...alreadyCreatedWineries];
+        console.log(wineriesResult[0]);
+
+        const wineriesFinal: WineryImported[] = [];
+        wineriesResult.forEach((winery: IWinary) => {
+            if (winery._id == null) { return; }
+
+            const matchedWinery = WineryUtil.checkWineryExists(wineries, winery, adminId);
+            if (matchedWinery == null || matchedWinery.id == null) { return; }
+
+            wineriesFinal.push({ 
+                ...winery, 
+                importedId: Number(matchedWinery.id)
+            });
+            //this.addParticipatedWinary(catalogueId, winery._id.toString());
         });
+        console.log("Wineries final: " + wineriesFinal.length);
 
         // Delete all samples
-        this.deleteSamplesByCatalogueId(catalogueId);
-        //await Wine.deleteMany({ name: { $in: [...samples.map(it => (it.wineId as IWine).name)] } });
+        //this.deleteSamplesByCatalogueId(catalogueId);
 
-        // Create new samples
+        //  Create new samples
         const samplesToSave: ISample[] = [];
         const winesToSave: IWine[] = [];
-        
-        samples.forEach((sample: { wineId: IWine; }, index: number) => {
+        const winesAlreadyCreated: IWine[] = [];
+        //samples.forEach(async (sample: { wineId: IWine; }, index: number) => {
+
+        const wineriesWines = await this.wineRepository.getWinesByWineries(wineriesFinal.map(winery => winery._id?.toString() ?? ""));
+        for (const sample of samples) {
+
             const wine = sample.wineId as IWine;
             const wineryId = wine.winaryId as unknown as number;
-            const foundWineryId = savedWineries.find(winery => winery.importedId == wineryId)?._id;
-            if (foundWineryId == null) { return; }
+            const foundWineryId = wineriesFinal.find(winery => winery.importedId == wineryId)?._id;
+            if (foundWineryId == null) { continue; }
+
+            const wineryWines = wineriesWines.filter(w => w.winaryId?.toString() === foundWineryId.toString());
+            const foundWine = WineUtil.checkWineExists(wineryWines, wine, foundWineryId.toString());
 
             wine.winaryId = foundWineryId;
-            winesToSave.push(wine);
-        });
-        const insertedWines = await Wine.insertMany(winesToSave);
+            if (foundWine != null) {
+                winesAlreadyCreated.push(foundWine);
+            } else {
+                if (wine.grapeVarietals == null || wine.grapeVarietals.length == 0) { wine.grapeVarietals = [{ grape: wine.name }]; }
+                winesToSave.push(wine);
+            }
+        }
+        console.log("Wines already created: " + winesAlreadyCreated.length);
+        console.log("Wines to save: " + winesToSave.length);
+
+        const finalWines: IWine[] = [...((await Wine.insertMany(winesToSave)).map(it => it.toObject())), ...winesAlreadyCreated];
 
         samples.forEach((sample: ISample, index: string | number) => {
-            const wine = insertedWines[index] as IWine;
-            const sampleToSave = sample as ISample;
-            sampleToSave.wineId = wine._id;
-            samplesToSave.push(sampleToSave);
+            const wine = sample.wineId as unknown as IWine;
+            const wineryId = wine.winaryId;
+
+            const foundWineryId = wineriesFinal.find(winery => winery._id == wineryId)?._id;
+            if (foundWineryId == null) { return; }
+
+            const foundWine = WineUtil.checkWineExists(finalWines, wine, foundWineryId.toString());
+            if (foundWine == null) { return; }
+
+            sample.wineId = foundWine._id;
+            samplesToSave.push(sample);
         });
+        console.log("Samples to save: " + samplesToSave.length);
         await Sample.insertMany(samplesToSave);
+        const endTime = new Date().getTime();
+        console.log("Import time: " + (endTime - startTime) + "ms");
     }
 }

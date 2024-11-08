@@ -17,7 +17,7 @@ export class WinaryRepository {
     }
 
     //Admins part
-    async getCataloguesByAdmin(adminId: ObjectId) {
+    async getWineriesByAdmin(adminId: ObjectId) {
         return Winary.find({ adminId: adminId });
     }
 

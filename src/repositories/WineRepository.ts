@@ -39,27 +39,33 @@ export class WineRepository {
         return await Wine.find({ winaryId: id });
     }
 
+    getWinesByWineries = async (wineryIds: string[]) => {
+        return await Wine.find({ winaryId: { $in: wineryIds } });
+    }
+
     async getGrapeVarietals() {
         return await GrapeVarietal.find({});
     }
 
     // Admins part
     createWineSample = async (wineSample: ISample, wine: IWine, wineryId: string) => {
-        // When creating wine sample, firstly check if the wine is already created
+        const createdWine = await this.createWine(wine, wineryId);
+        wineSample.wineId = createdWine._id
+        return await new Sample(wineSample).save()
+    }
+
+    createWine = async (wine: IWine, wineryId: string): Promise<IWine> => {
+        // When creating firstly check if the wine is already created
         const wineryWines = await this.getWinesByWinery(wineryId);
         const existedWine = this.checkExistedWine(wine, wineryWines);
 
         if (existedWine) {
-            wineSample.wineId = existedWine._id;
-        } else {
-            const createdWine = await this.createWine(wine);
-            wineSample.wineId = createdWine.id;
+            return existedWine;
         }
 
-        return await new Sample(wineSample).save()
-    }
-
-    createWine = async (wine: IWine) => {
+        if (wine.grapeVarietals.length == 0) {
+            wine.grapeVarietals = [{ grape: wine.name}];
+        }
         return await new Wine(wine).save()
     }
 
@@ -67,7 +73,7 @@ export class WineRepository {
         const bulkOps = wineSamples.map(sample => ({
             updateOne: {
                 filter: { _id: new mongoose.Types.ObjectId(sample.id) },
-                update: { $set: { rating: sample.rating, name: sample.name } }
+                update: { $set: { rating: sample.rating, name: sample.name , note: sample.note, ratingCommission: sample.ratingCommission} }
             }
         }));
         return await Sample.bulkWrite(bulkOps);

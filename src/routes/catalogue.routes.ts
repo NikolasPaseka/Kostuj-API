@@ -36,7 +36,7 @@ catalogueRouter.route("/:id/wineries")
     .delete(auth, catchAsync(catalogueController.removeParticipatedWinery))
 
 catalogueRouter.route("/:id/importContentData")
-    .post(catchAsync(catalogueController.importContentData))
+    .post(auth, catchAsync(catalogueController.importContentData))
 
 catalogueRouter.route("/:id/autoLabelSamples")
     .get(catchAsync(catalogueController.autoLabelSamples))

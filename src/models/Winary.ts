@@ -16,7 +16,17 @@ const winarySchema = new Schema({
     isPublic: { type: Boolean, required: true, default: false },
 });
 
-export type IWinary = InferSchemaType<typeof winarySchema> & Partial<{ _id: Types.ObjectId }>; 
+export type IWinary = InferSchemaType<typeof winarySchema> & Partial<{ _id: Types.ObjectId, id?: string }>; 
 export type WineryDomain = InferSchemaType<typeof winarySchema> & Partial<{ id: string }>;
 
 export const Winary = model<IWinary>("Winary", winarySchema);
+
+export const WineryUtil = {
+    checkWineryExists: (wineries: IWinary[], wineryToFind: IWinary, adminId: string): IWinary | null => {
+        return wineries.find(winery => 
+            winery.name === wineryToFind.name && 
+            winery.address === wineryToFind.address &&
+            winery.adminId?.toString() === adminId
+        ) ?? null;
+    }
+}

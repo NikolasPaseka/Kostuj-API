@@ -26,7 +26,7 @@ export class WinaryController {
     getWineriesByAdmin = async (req: TokenRequest, res: Response) => {
         const adminId: ObjectId = req.token._id;
 
-        const adminCatalogues = await this.winaryRepository.getCataloguesByAdmin(adminId);
+        const adminCatalogues = await this.winaryRepository.getWineriesByAdmin(adminId);
         res.json(adminCatalogues);
     }
 

@@ -1,5 +1,4 @@
 import { Schema, model, Types, InferSchemaType } from "mongoose";
-import { GrapeVarietal, IGrapeVarietal } from "./GrapeVarietal";
 
 const wineSchema = new Schema({
     name: { type: String, required: true },
@@ -24,3 +23,13 @@ const wineSchema = new Schema({
 export const Wine = model<IWine>("Wine", wineSchema);
 
 export type IWine = InferSchemaType<typeof wineSchema> & Partial<{ _id: Types.ObjectId }>; 
+
+export const WineUtil = {
+    checkWineExists: (wines: IWine[], wineToFind: IWine, wineryId: string): IWine | null => {
+        return wines.find(winery => 
+            winery.name === wineToFind.name &&
+            winery.year === wineToFind.year && 
+            winery.winaryId?.toString() === wineryId
+        ) ?? null;
+    }
+}
