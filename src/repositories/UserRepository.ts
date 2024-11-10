@@ -6,6 +6,7 @@ import { Sample } from "../models/Sample";
 import { ITastedSample, TastedSample } from "../models/TastedSample";
 import { IUser, User } from "../models/User";
 import { ResponseError } from "../utils/ResponseError";
+import { AuthorizationRoles } from "../models/utils/AuthorizationRoles";
 
 export class UserRepository {
 
@@ -18,7 +19,7 @@ export class UserRepository {
     }
 
     async getUserById(id: ObjectId | string) {
-        const user = await User.findById(id).select("email firstName lastName avatarImageUrl");
+        const user = await User.findById(id).select("email firstName lastName avatarImageUrl authorizations");
         if (user == null) {
             throw new ResponseError("User does not exist", 404);
         }
@@ -26,9 +27,11 @@ export class UserRepository {
     }
 
     async createUser(userData: IUser) {
-        // check if user already exists
         userData.createdAt = new Date();
         userData.updatedAt = new Date();
+        // Add default authorizations
+        userData.authorizations = [AuthorizationRoles.USER];
+        // check if user already exists
         const res = await this.getUserByEmail(userData.email);
         if (res) {
             throw new ResponseError("User with this email address already exists");
@@ -58,10 +61,18 @@ export class UserRepository {
     }
 
     addUserRefreshToken = async (userId: string, token: string) => {
-        await User.updateOne(
-            { _id: userId },
-            { $push: { refreshTokens: token }}
-        );
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new ResponseError("User does not exist", 404);
+        }
+
+        // Ensure there are only 5 refresh tokens
+        if (user.refreshTokens.length >= 5) {
+            user.refreshTokens = user.refreshTokens.slice(-4); // Keep only the last 4 tokens
+        }
+
+        user.refreshTokens.push(token);
+        await user.save();
     }
 
     deleteUserRefreshToken = async (userId: string, token: string) => {

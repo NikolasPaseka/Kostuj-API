@@ -269,7 +269,7 @@ export class UserController {
     // TODO DELETE
     resetPassowrd = async (req: TokenRequest, res: Response) => {
         const { userId, newPassword } = req.body;
-
+        
         await this.userRepository.resetPassword(userId, newPassword);
         res.json("Successfuly reseted");
     }
