@@ -18,6 +18,7 @@ export interface ICatalogue {
     price: number,
     downloads: number,
     participatedWineries?: Schema.Types.ObjectId[]
+    coorganizators: Schema.Types.ObjectId[]
 }
 
 const catalogueSchema = new Schema<ICatalogue>({
@@ -37,7 +38,8 @@ const catalogueSchema = new Schema<ICatalogue>({
     adminId: { type: Schema.Types.ObjectId, ref: "User"},
     price: { type: Number, required: true, default: 0 },
     downloads: { type: Number, required: true, default: 0 },
-    participatedWineries: [{ type: Schema.Types.ObjectId, ref: "Winary" }]
+    participatedWineries: [{ type: Schema.Types.ObjectId, ref: "Winary" }],
+    coorganizators: [{ type: Schema.Types.ObjectId, ref: "User" }]
 });
 
 export const Catalogue = model<ICatalogue>("Catalogue", catalogueSchema);

@@ -14,13 +14,14 @@ import { generateRandomHash } from "../utils/randomHash";
 import { IWine, Wine } from "../models/Wine";
 import { ISample, Sample } from "../models/Sample";
 import { IGrapeVarietal } from "../models/GrapeVarietal";
-import { AuthorizationRoles } from "../models/utils/AuthorizationRoles";
+import { AuthorizationManager, AuthorizationRoles } from "../models/utils/AuthorizationRoles";
+import { UserRepository } from "../repositories/UserRepository";
 
 export class CatalogueController {
 
     private catalogueRepository = new CatalogueRepository();
     private wineryRepository = new WinaryRepository();
-    private wineRepository = new WineRepository();
+    private userRepository = new UserRepository();
 
     getCatalogues = async (req: Request, res: Response) => {
         let page: number = parseInt(req.query.page as string);
@@ -45,14 +46,16 @@ export class CatalogueController {
         //const start = new Date().getTime();
         const { id } = req.params;
         const catalogue = await this.catalogueRepository.getCatalogueDetail(id);
+        const fetchedAdmin = await this.userRepository.getUserById(catalogue.adminId as ObjectId);
         const participatedWineriesCount = (await this.catalogueRepository.getParticipatedWineries(id)).length;
         const samplesColorCounts = await this.catalogueRepository.getCatalogueSamplesColorCounts(id);
         
         res.json({ 
             id: catalogue.id, 
             ...catalogue.toObject(), 
-            participatedWineriesCount, 
-            samplesColorCounts: Object.fromEntries(samplesColorCounts) 
+            participatedWineriesCount,
+            samplesColorCounts: Object.fromEntries(samplesColorCounts),
+            fetchedAdmin: fetchedAdmin
         });
         //console.log(`Get catalogue detail took: ${new Date().getTime() - start} ms`);
     }
@@ -94,7 +97,6 @@ export class CatalogueController {
             throw new ResponseError("Invalid admin id", 401);
         }
         
-        // TODO: add validation
         const newCatalogue = await this.catalogueRepository.createCatalogue(catalogue);
         res.json(newCatalogue);
     }
@@ -117,9 +119,9 @@ export class CatalogueController {
         const adminId: ObjectId = req.token._id;
 
         const catalogue = await this.catalogueRepository.getCatalogueDetail(id);
-        // if (catalogue.adminId != adminId) {
-        //     throw new ResponseError("Invalid admin id", 401);
-        // }
+        if (catalogue.adminId != adminId) {
+            throw new ResponseError("Invalid admin id", 401);
+        }
         catalogue.imageUrl?.forEach(async (imageUrl) => {
             this.catalogueRepository.deleteCatalogueImage(id, imageUrl);
             handleDeleteImage(imageUrl, "kostuj_catalogues");
@@ -236,6 +238,31 @@ export class CatalogueController {
 
         await this.catalogueRepository.deleteSample(id);
         res.json({ "message": "Sample deleted" });
+    }
+
+    addCoorganizatorToCatalogue = async (req: TokenRequest, res: Response) => {
+        const { id } = req.params;
+        const adminId = req.token._id.toString();
+        const coorganizatorEmail = req.body.email as string;
+
+        const catalogue = await this.catalogueRepository.getCatalogueDetail(id);
+
+        if (catalogue.adminId.toString() !== adminId) {
+            throw new ResponseError("Invalid admin id", 401);
+        }
+
+        const user: IUser | null = await this.userRepository.getUserByEmail(coorganizatorEmail);
+        if (user == null || user._id == null) {
+            throw new ResponseError("User not found", 404);
+        }
+
+        const authManager = new AuthorizationManager();
+        if (!authManager.isAdmin(user.authorizations)) {
+            throw new ResponseError("User is not an admin", 400);
+        }
+
+        await this.catalogueRepository.addCoorganizatorToCatalogue(id, user._id.toString());
+        return res.json(user);
     }
 
     importContentData = async (req: TokenRequest, res: Response) => {

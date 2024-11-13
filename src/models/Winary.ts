@@ -1,4 +1,5 @@
 import { InferSchemaType, Schema, Types, model } from "mongoose";
+import { convertIdPlugin } from "./utils/convertIdPlugin";
 
 const winarySchema = new Schema({
     name: { type: String, required: true },

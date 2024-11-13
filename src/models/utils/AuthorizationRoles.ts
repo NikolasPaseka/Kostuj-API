@@ -30,4 +30,8 @@ export class AuthorizationManager {
     isSuperAdmin(authorizations: number[]): boolean {
         return authorizations.includes(AuthorizationRoles.SUPER_ADMIN);
     }
+
+    isAdmin(authorizations: number[]): boolean {
+        return authorizations.includes(AuthorizationRoles.ADMIN);
+    }
 }

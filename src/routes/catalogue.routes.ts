@@ -45,6 +45,9 @@ catalogueRouter.route("/:id/images")
     .post(auth, getMulterUpload("catalogueImages", true), catchAsync(catalogueController.uploadCatalogueImages))
     .delete(auth, catchAsync(catalogueController.deleteCatalogueImage))
 
+catalogueRouter.route("/:id/coorganizators")
+    .post(auth, catchAsync(catalogueController.addCoorganizatorToCatalogue))
+
 catalogueRouter.route("/samples/:id")
     .get(catchAsync(catalogueController.getCatalogueSampleDetail))
     .delete(auth, catchAsync(catalogueController.deleteCatalogueSample))

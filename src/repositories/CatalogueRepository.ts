@@ -5,11 +5,9 @@ import { ISample, Sample } from "../models/Sample";
 import { IWinary, Winary, WineryUtil } from "../models/Winary";
 import { IWine, Wine, WineUtil } from "../models/Wine";
 import { ResponseError } from "../utils/ResponseError";
-import { User } from "../models/User";
-import { get } from "http";
 import { WineColorOptions } from "../models/utils/WineColorOptions";
 import { WineRepository } from "./WineRepository";
-import { it } from "node:test";
+import { User } from "../models/User";
 
 
 export class CatalogueRepository {
@@ -34,14 +32,15 @@ export class CatalogueRepository {
 
     async getCatalogueDetail(catalogueId: string) {
         const catalogue = await Catalogue.findById(catalogueId)
-            .populate({ 
-                path: "adminId", 
-                model: User, 
-                select: "firstName lastName" 
+            .populate({
+                path: "coorganizators",
+                model: User,
             })
+
         if (catalogue == null) {
             throw new ResponseError("Catalogue not found", 404);
         }
+
         return catalogue;
     }
 
@@ -153,6 +152,10 @@ export class CatalogueRepository {
         await Catalogue.updateOne({ _id: catalogueId }, { $set: { participatedWineries: [] } });
     }
 
+    addCoorganizatorToCatalogue = async (catalogueId: string, coorganizatorId: string) => {
+        await Catalogue.updateOne({ _id: catalogueId }, { $push: { coorganizators: coorganizatorId } });
+    }
+
     addCatalogueImages = async (catalogueId: string, imageUrls: string[]) => {
         await Catalogue.updateOne({ _id: catalogueId }, { $push: { imageUrl: { $each: imageUrls } } });
     }
@@ -169,7 +172,6 @@ export class CatalogueRepository {
         await Sample.deleteOne({ _id: sampleId });
     }
 
-    // import and export
     importContentData = async (catalogueId: string, wineries: any, samples: any, adminId: string) => {
         const startTime = new Date().getTime();
         type WineryImported = IWinary & { importedId: number };
