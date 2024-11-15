@@ -159,19 +159,23 @@ export class CatalogueController {
 
     addParticipatedWinery = async (req: TokenRequest, res: Response) => {
         const { id } = req.params;
-        const winery: WineryDomain = req.body;
+        const winery: IWinary | IWinary[] = req.body;
 
-        if (winery.id == null || winery.id.length == 0) {
-            const newWinery = await this.wineryRepository.createWinary(winery);
-            await this.catalogueRepository.addParticipatedWinary(id, newWinery._id.toString());
-            return res.json(newWinery);
-        }
-        const participatedWineries = await this.catalogueRepository.getParticipatedWineries(id);
-        if (participatedWineries.map(winery => winery.id).includes(winery.id)) {
-            throw new ResponseError("Winery already participated", 400);
-        }
+        if (!Array.isArray(winery)) {
+            if (winery.id == null || winery.id.length == 0) {
+                const newWinery = await this.wineryRepository.createWinary(winery);
+                await this.catalogueRepository.addParticipatedWinary(id, newWinery._id.toString());
+                return res.json(newWinery);
+            }
+            const participatedWineries = await this.catalogueRepository.getParticipatedWineries(id);
+            if (participatedWineries.map(winery => winery.id).includes(winery.id)) {
+                throw new ResponseError("Winery already participated", 400);
+            }
 
-        await this.catalogueRepository.addParticipatedWinary(id, winery.id);
+            await this.catalogueRepository.addParticipatedWinary(id, winery.id);
+        } else {
+            await this.catalogueRepository.addParticipatedWineries(id, winery.map(winery => winery.id).filter(id => id != null));
+        }
         res.json(winery);
     }
 
