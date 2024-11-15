@@ -174,7 +174,7 @@ export class CatalogueController {
 
             await this.catalogueRepository.addParticipatedWinary(id, winery.id);
         } else {
-            const wineryIds: string[] = winery.map(winery => winery.id).filter(id => id != undefined);
+            const wineryIds: string[] = winery.map(winery => winery.id).filter((id): id is string => id !== undefined);
             await this.catalogueRepository.addParticipatedWineries(id, wineryIds);
         }
         res.json(winery);
