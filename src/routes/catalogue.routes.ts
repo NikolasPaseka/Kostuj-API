@@ -23,6 +23,9 @@ catalogueRouter.route("/:id")
     .put(auth, catchAsync(catalogueController.updateCatalogue))
     .delete(auth, catchAsync(catalogueController.deleteCatalogue))
 
+// catalogueRouter.route("/:id/download")
+//     .get(catchAsync(catalogueController.downloadCatalogue))
+
 catalogueRouter.route("/:id/publish")
     .post(auth, catchAsync(catalogueController.changePublishState))
 
@@ -47,6 +50,7 @@ catalogueRouter.route("/:id/images")
 
 catalogueRouter.route("/:id/coorganizators")
     .post(auth, catchAsync(catalogueController.addCoorganizatorToCatalogue))
+    .delete(auth, catchAsync(catalogueController.removeCoorganizatorFromCatalogue))
 
 catalogueRouter.route("/samples/:id")
     .get(catchAsync(catalogueController.getCatalogueSampleDetail))

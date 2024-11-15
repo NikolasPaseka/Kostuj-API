@@ -115,7 +115,12 @@ export class CatalogueRepository {
     // Admins part
 
     getCataloguesByAdmin = async (adminId: ObjectId) => {
-        return await Catalogue.find({ adminId: adminId });
+        return await Catalogue.find({ 
+            $or: [
+                { adminId: adminId },
+                { coorganizators: adminId }
+            ]
+        });
     }
 
     createCatalogue = async (catalogue: ICatalogue) => {
@@ -154,6 +159,10 @@ export class CatalogueRepository {
 
     addCoorganizatorToCatalogue = async (catalogueId: string, coorganizatorId: string) => {
         await Catalogue.updateOne({ _id: catalogueId }, { $push: { coorganizators: coorganizatorId } });
+    }
+
+    removeCoorganizatorFromCatalogue = async (catalogueId: string, coorganizatorId: string) => {
+        await Catalogue.updateOne({ _id: catalogueId }, { $pull: { coorganizators: coorganizatorId } });
     }
 
     addCatalogueImages = async (catalogueId: string, imageUrls: string[]) => {

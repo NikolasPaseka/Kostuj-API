@@ -105,10 +105,17 @@ export class CatalogueController {
         const { id } = req.params;
         const adminId: ObjectId = req.token._id;
         const catalogue = req.body as ICatalogue;
-
-        if (catalogue.adminId != adminId) {
+    
+        const catalogueDB = await this.catalogueRepository.getCatalogueDetail(id);
+        const catalogueDBOrganizators = catalogueDB.coorganizators.map(coorganizator => {
+            const castCoorganizator = coorganizator as unknown as IUser;
+            return castCoorganizator._id?.toString() ?? "";
+        });
+        if (catalogueDB.adminId != adminId && !catalogueDBOrganizators.includes(adminId.toString())) {
             throw new ResponseError("Invalid admin id", 401);
         }
+
+        catalogue.adminId = catalogueDB.adminId;
 
         await this.catalogueRepository.updateCatalogue(id, catalogue);
         res.json({ "message": "Catalogue updated" });
@@ -263,6 +270,24 @@ export class CatalogueController {
 
         await this.catalogueRepository.addCoorganizatorToCatalogue(id, user._id.toString());
         return res.json(user);
+    }
+
+    removeCoorganizatorFromCatalogue = async (req: TokenRequest, res: Response) => {
+        const { id } = req.params;
+        const adminId = req.token._id.toString();
+        const coorganizatorId = req.body.coorganizatorId as string;
+
+        const catalogue = await this.catalogueRepository.getCatalogueDetail(id);
+
+        if (catalogue.adminId.toString() !== adminId) {
+            throw new ResponseError("Invalid admin id", 401);
+        }
+        if (catalogue.adminId.toString() === coorganizatorId) {
+            throw new ResponseError("Cannot remove admin", 400);
+        }
+
+        await this.catalogueRepository.removeCoorganizatorFromCatalogue(id, coorganizatorId);
+        return res.json({ "message": "Coorganizator removed" });
     }
 
     importContentData = async (req: TokenRequest, res: Response) => {

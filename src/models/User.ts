@@ -31,6 +31,8 @@ const userSchema = new Schema({
     }]
 });
 
+userSchema.set('toObject', { virtuals: true });
+
 userSchema.pre("save", async function (next) {
     const user = this;
     if (user.isModified("password") && user.password != null) {

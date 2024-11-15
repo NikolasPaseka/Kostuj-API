@@ -37,7 +37,7 @@ app.use(bodyParser.json());
 
 // routes
 app.get('/', (req: Request, res: Response) => {
-    res.send("Kostuj API")
+    res.send("Kostuj API");
 });
 
 app.use('/catalogues', catalogueRouter);

@@ -4,7 +4,10 @@
         "module": "CommonJS",
         "resolveJsonModule": true,
         "esModuleInterop": true,
-        "outDir": "src/dist",
-        "strictNullChecks": true
-	}
+        "outDir": "./dist",
+        "strictNullChecks": true,
+        "forceConsistentCasingInFileNames": true
+	},
+    "include": ["src/**/*", "api/**/*"],
+    "exclude": ["node_modules", "dist"]
 }
