@@ -1,4 +1,5 @@
 import { Schema, model, Types, InferSchemaType } from "mongoose";
+import { ResultSweetnessOptions } from "./utils/ResultSweetnessOptions";
 
 const wineSchema = new Schema({
     name: { type: String, required: true },
@@ -9,7 +10,9 @@ const wineSchema = new Schema({
         required: true,
         set: function(res: number) { return Math.round(res) }
     },
+    attribute: { type: String },
     residualSugar: { type: Number },
+    resultSweetness: { type: String, enum: ResultSweetnessOptions},
     alcoholContent: { type: Number },
     acidity: { type: Number },
     grapesSweetness: { type: Number },
