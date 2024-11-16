@@ -43,7 +43,7 @@ export class WineController {
     createWineSample = async (req: Request, res: Response) => {
         const { sample, wine, selectedWineryId }: { sample: ISample; wine: IWine; selectedWineryId: string } = req.body;
         
-        if (wine.resultSweetness && !Object.values(ResultSweetnessOptions).includes(wine.resultSweetness)) {
+        if (wine.resultSweetness && !Object.values(ResultSweetnessOptions).includes(wine.resultSweetness as ResultSweetnessOptions)) {
             wine.resultSweetness = undefined;
         }
         const newWineSample = await this.wineRepository.createWineSample(sample, wine, selectedWineryId);

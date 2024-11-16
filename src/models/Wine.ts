@@ -29,10 +29,11 @@ export type IWine = InferSchemaType<typeof wineSchema> & Partial<{ _id: Types.Ob
 
 export const WineUtil = {
     checkWineExists: (wines: IWine[], wineToFind: IWine, wineryId: string): IWine | null => {
-        return wines.find(winery => 
-            winery.name === wineToFind.name &&
-            winery.year === wineToFind.year && 
-            winery.winaryId?.toString() === wineryId
+        return wines.find(wine => 
+            wine.name === wineToFind.name &&
+            wine.year === wineToFind.year &&
+            wine.color === wineToFind.color &&
+            wine.winaryId?.toString() === wineryId
         ) ?? null;
     }
 }
