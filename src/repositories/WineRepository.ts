@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { GrapeVarietal } from "../models/GrapeVarietal";
 import { ISample, Sample } from "../models/Sample";
 import { Winary } from "../models/Winary";
-import { IWine, Wine } from "../models/Wine";
+import { IWine, Wine, WineUtil } from "../models/Wine";
 
 export class WineRepository {
     private checkExistedWine = (wine: IWine, wineList: IWine[]): IWine | null => {
@@ -57,7 +57,7 @@ export class WineRepository {
     createWine = async (wine: IWine, wineryId: string): Promise<IWine> => {
         // When creating firstly check if the wine is already created
         const wineryWines = await this.getWinesByWinery(wineryId);
-        const existedWine = this.checkExistedWine(wine, wineryWines);
+        const existedWine = WineUtil.checkWineExists(wineryWines, wine, wineryId);
 
         if (existedWine) {
             return existedWine;
