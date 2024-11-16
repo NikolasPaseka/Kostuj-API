@@ -5,6 +5,7 @@ import { WineRepository } from "../repositories/WineRepository";
 import { ResponseError } from "../utils/ResponseError";
 import { ISample } from "../models/Sample";
 import { parseBoolean } from "../utils/parseBoolean";
+import { ResultSweetnessOptions } from "../models/utils/ResultSweetnessOptions";
 
 export class WineController {
     private wineRepository = new WineRepository();
@@ -41,7 +42,10 @@ export class WineController {
     // Admins part
     createWineSample = async (req: Request, res: Response) => {
         const { sample, wine, selectedWineryId }: { sample: ISample; wine: IWine; selectedWineryId: string } = req.body;
-
+        
+        if (wine.resultSweetness && !Object.values(ResultSweetnessOptions).includes(wine.resultSweetness)) {
+            wine.resultSweetness = undefined;
+        }
         const newWineSample = await this.wineRepository.createWineSample(sample, wine, selectedWineryId);
         const responseData = await this.wineRepository.getSampleDetail(newWineSample.id);
 
