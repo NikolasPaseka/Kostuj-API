@@ -18,7 +18,7 @@ const wineSchema = new Schema({
     grapesSweetness: { type: Number },
     tasteResult: { type: String },
     productionMethod: { type: String },
-    grapeVarietals: [{ grape: String }],
+    grapeVarietals: [{ type: Schema.Types.ObjectId, ref: "GrapeVarietal" }],
     imageUrl: { type: String, required: false },
     winaryId: { type: Schema.Types.ObjectId, ref: "Winary" }
 });

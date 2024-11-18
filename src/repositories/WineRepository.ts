@@ -47,6 +47,10 @@ export class WineRepository {
         return await GrapeVarietal.find({});
     }
 
+    getGrapeVariatelByName = async (name: string) => {
+        return await GrapeVarietal.findOne({ grape: name });
+    }
+
     // Admins part
     createWineSample = async (wineSample: ISample, wine: IWine, wineryId: string) => {
         const createdWine = await this.createWine(wine, wineryId);
@@ -64,7 +68,10 @@ export class WineRepository {
         }
 
         if (wine.grapeVarietals.length == 0) {
-            wine.grapeVarietals = [{ grape: wine.name}];
+            const grapeId = (await this.getGrapeVariatelByName(wine.name))?._id
+            if (grapeId) {
+                wine.grapeVarietals = [grapeId];
+            }
         }
         return await new Wine(wine).save()
     }

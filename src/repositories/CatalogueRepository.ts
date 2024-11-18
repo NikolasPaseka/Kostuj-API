@@ -1,6 +1,6 @@
 import { ObjectId } from "mongoose";
 import { Catalogue, ICatalogue } from "../models/Catalogue";
-import { GrapeVarietal } from "../models/GrapeVarietal";
+import { GrapeVarietal, IGrapeVarietal } from "../models/GrapeVarietal";
 import { ISample, Sample } from "../models/Sample";
 import { IWinary, Winary, WineryUtil } from "../models/Winary";
 import { IWine, Wine, WineUtil } from "../models/Wine";
@@ -66,11 +66,14 @@ export class CatalogueRepository {
         .populate({
             path: "wineId",
             model: Wine,
-            populate: {
+            populate: [{
                 path: "winaryId",
-                model: Winary
-            }
-        });
+                model: Winary,
+            }, {
+                path: "grapeVarietals",
+                model: GrapeVarietal
+            }]
+        }, );
     }
 
     async getCatalogueSampleDetail(id: string) {
@@ -184,6 +187,7 @@ export class CatalogueRepository {
     importContentData = async (catalogueId: string, wineries: any, samples: any, adminId: string) => {
         const startTime = new Date().getTime();
         type WineryImported = IWinary & { importedId: number };
+        const grapeVarietals: IGrapeVarietal[] = await this.wineRepository.getGrapeVarietals();
 
         //delete all participated TODO DELETE LATER
         const catalogue = await this.getCatalogueDetail(catalogueId);
@@ -250,7 +254,11 @@ export class CatalogueRepository {
             if (foundWine != null) {
                 winesAlreadyCreated.push(foundWine);
             } else {
-                if (wine.grapeVarietals == null || wine.grapeVarietals.length == 0) { wine.grapeVarietals = [{ grape: wine.name }]; }
+
+                if (wine.grapeVarietals == null || wine.grapeVarietals.length == 0) { 
+                    const foundGrapeVariatal = grapeVarietals.find(g => g.grape == wine.name)?._id
+                    if (foundGrapeVariatal) { wine.grapeVarietals = [foundGrapeVariatal] }
+                }
                 winesToSave.push(wine);
             }
         }
