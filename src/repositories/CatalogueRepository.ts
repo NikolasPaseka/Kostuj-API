@@ -115,8 +115,11 @@ export class CatalogueRepository {
         return finalSet;
     }
 
-    // Admins part
+    increaseDownloadCount = async (catalogueId: string) => {
+        await Catalogue.updateOne({ _id: catalogueId }, { $inc: { downloads: 1 } });
+    }
 
+    // Admins part
     getCataloguesByAdmin = async (adminId: ObjectId) => {
         return await Catalogue.find({ 
             $or: [

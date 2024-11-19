@@ -23,15 +23,14 @@ catalogueRouter.route("/:id")
     .put(auth, catchAsync(catalogueController.updateCatalogue))
     .delete(auth, catchAsync(catalogueController.deleteCatalogue))
 
-// catalogueRouter.route("/:id/download")
-//     .get(catchAsync(catalogueController.downloadCatalogue))
-
 catalogueRouter.route("/:id/publish")
     .post(auth, catchAsync(catalogueController.changePublishState))
 
-// ADD new route for download
 catalogueRouter.route("/:id/samples")
     .get(catchAsync(catalogueController.getCatalogueSamples))
+
+catalogueRouter.route("/:id/download")
+    .get(catchAsync(catalogueController.downloadCatalogue))
 
 catalogueRouter.route("/:id/wineries")
     .get(catchAsync(catalogueController.getParticipatedWineries))

@@ -67,6 +67,14 @@ export class CatalogueController {
         res.json(samples);
     }
 
+    downloadCatalogue = async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const samples = await this.catalogueRepository.getCatalogueSamples(id);
+        await this.catalogueRepository.increaseDownloadCount(id);
+
+        res.json(samples);
+    }
+
     getCatalogueSampleDetail = async (req: Request, res: Response) => {
         const { id } = req.params;
         const sample = await this.catalogueRepository.getCatalogueSampleDetail(id);
