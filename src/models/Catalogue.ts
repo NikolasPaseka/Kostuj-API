@@ -1,7 +1,9 @@
 import { Schema, model } from "mongoose";
+import { CatalogueTypeOptions } from "./utils/CatalogueTypeOptions";
 
 export interface ICatalogue {
     title: string,
+    type: CatalogueTypeOptions
     description?: string,
     year: number,
     startDate: number,
@@ -23,6 +25,12 @@ export interface ICatalogue {
 
 const catalogueSchema = new Schema<ICatalogue>({
     title: { type: String, required: true },
+    type: {
+        type: String,
+        required: true, 
+        default: CatalogueTypeOptions.FEAST,
+        enum: CatalogueTypeOptions 
+    },
     description: String,
     year: { type: Number, required: true },
     startDate: { type: Number, required: true },
