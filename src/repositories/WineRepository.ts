@@ -67,12 +67,11 @@ export class WineRepository {
             return existedWine;
         }
 
-        if (wine.grapeVarietals.length == 0) {
-            const grapeId = (await this.getGrapeVariatelByName(wine.name))?._id
-            if (grapeId) {
-                wine.grapeVarietals = [grapeId];
-            }
+        const grapeId = (await this.getGrapeVariatelByName(wine.name))?._id
+        if (grapeId) {
+            wine.grapeVarietals = [grapeId];
         }
+
         return await new Wine(wine).save()
     }
 
