@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IUser } from "../models/User";
+import { IUser, UserAdministrationSettings } from "../models/User";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
@@ -272,5 +272,21 @@ export class UserController {
         
         await this.userRepository.resetPassword(userId, newPassword);
         res.json("Successfuly reseted");
+    }
+
+    // Administration settings
+    getAdministrationSettings = async (req: TokenRequest, res: Response) => {
+        const userId = req.token._id.toString();
+
+        const settings = await this.userRepository.getAdministrationSettings(userId);
+        res.json(settings);
+    }
+
+    updateAdministrationSettings = async (req: TokenRequest, res: Response) => {
+        const userId = req.token._id.toString();
+        const settings = req.body as UserAdministrationSettings;
+
+        await this.userRepository.updateAdministrationSettings(userId, settings);
+        res.json("Successfuly updated");
     }
 }

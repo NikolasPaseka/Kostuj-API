@@ -38,6 +38,10 @@ userRouter.route("/delete")
 userRouter.route("/commissionCatalogues")
     .get(auth, catchAsync(userController.getCommissionCatalogues))
 
+userRouter.route("/administrationSettings")
+    .get(auth, catchAsync(userController.getAdministrationSettings))
+    .put(auth, catchAsync(userController.updateAdministrationSettings))
+
 userRouter.route("/:id")
     .get(auth, catchAsync(userController.getUserById))
 

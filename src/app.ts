@@ -13,6 +13,7 @@ import userRouter from "./routes/user.routes";
 import mapLocationRouter from "./routes/mapLocation.routes";
 import catalogueRouter from "./routes/catalogue.routes";
 import wineRouter from "./routes/wines.routes";
+import mapDataRouter from "./routes/mapData.routes";
 import { ResponseError } from "./utils/ResponseError";
 
 const env = load({
@@ -45,6 +46,7 @@ app.use('/wineries', wineryRouter);
 app.use('/wines', wineRouter);
 app.use('/users', userRouter);
 app.use("/mapLocations", mapLocationRouter);
+app.use("/catalogues/mapData", mapDataRouter);
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));     
 

@@ -4,7 +4,7 @@ import { CommissionMember } from "../models/CommissionMember";
 import { RatedSample } from "../models/RatedSample";
 import { Sample } from "../models/Sample";
 import { ITastedSample, TastedSample } from "../models/TastedSample";
-import { IUser, User } from "../models/User";
+import { IUser, User, UserAdministrationSettings } from "../models/User";
 import { ResponseError } from "../utils/ResponseError";
 import { AuthorizationRoles } from "../models/utils/AuthorizationRoles";
 
@@ -190,6 +190,16 @@ export class UserRepository {
             sampleId: { $in: tastedSamples.map(val => { return val.sampleId }) },
             userId: userId
         })
+    }
+
+    // Administration settings
+    async getAdministrationSettings(userId: string): Promise<UserAdministrationSettings | null> {
+        const user = await User.findById(userId).select("administrationSettings");
+        return user?.administrationSettings ?? null;
+    }
+
+    async updateAdministrationSettings(userId: string, settings: UserAdministrationSettings) {
+        await User.updateOne({ _id: userId }, { administrationSettings: settings });
     }
 
     // Super admins part

@@ -5,6 +5,17 @@ import { UserAuthOption } from "./utils/UserAuthOption";
 import { create } from "domain";
 import { AuthorizationRoles } from "./utils/AuthorizationRoles";
 
+export type UserAdministrationSettings = {
+    keepWineName: boolean,
+    keepWinery: boolean,
+    keepWineYear: boolean,
+    keepWineColor: boolean,
+    keepWineAttribute: boolean,
+    enableVoiceControl: boolean,
+    voiceControlDelay: number,
+    voiceControlPushToTalk: boolean
+}
+
 const userSchema = new Schema({
     email: {
         type: String,
@@ -24,11 +35,21 @@ const userSchema = new Schema({
     },
     createdAt: { type: Date, default: Date.now() },
     updatedAt: { type: Date, default: Date.now() },
-    authorizations: [{ 
-        type: Number, 
+    authorizations: { 
+        type: [Number], 
         default: [AuthorizationRoles.USER], 
         enum: AuthorizationRoles
-    }]
+    },
+    administrationSettings: {
+        keepWineName: { type: Boolean, default: false },
+        keepWinery: { type: Boolean, default: false },
+        keepWineYear: { type: Boolean, default: false },
+        keepWineColor: { type: Boolean, default: false },
+        keepWineAttribute: { type: Boolean, default: false },
+        enableVoiceControl: { type: Boolean, default: true },
+        voiceControlDelay: { type: Number, default: 500 },
+        voiceControlPushToTalk: { type: Boolean, default: false },
+    }
 });
 
 userSchema.set('toObject', { virtuals: true });
