@@ -84,4 +84,8 @@ export class WineRepository {
         }));
         return await Sample.bulkWrite(bulkOps);
     }
+
+    updateWineSampleRating = async (sampleId: string, rating: number) => {
+        return await Sample.updateOne({ _id: sampleId }, { rating });
+    }
 }

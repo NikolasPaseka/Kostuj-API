@@ -58,4 +58,12 @@ export class WineController {
 
         res.json({ message: "Samples updated" });
     }
+
+    updateWineSampleRating = async (req: Request, res: Response) => {
+        const { rating } = req.body;
+        const { id: sampleId } = req.params;
+        const updatedSample = await this.wineRepository.updateWineSampleRating(sampleId, rating);
+
+        res.json(updatedSample);
+    }
 }

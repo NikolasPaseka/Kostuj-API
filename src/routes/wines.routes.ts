@@ -14,6 +14,9 @@ wineRouter.route("/")
 wineRouter.route("/samples")
     .put(auth, catchAsync(wineController.updateWineSamples))
 
+wineRouter.route("/samples/:id/rating")
+    .put(auth, catchAsync(wineController.updateWineSampleRating))
+
 wineRouter.route("/grapeVarietals")
     .get(catchAsync(wineController.getGrapeVarietals))
 

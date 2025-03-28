@@ -11,6 +11,7 @@ export type UserAdministrationSettings = {
     keepWineYear: boolean,
     keepWineColor: boolean,
     keepWineAttribute: boolean,
+    autoIncreaseSampleNumber: boolean,
     enableVoiceControl: boolean,
     voiceControlDelay: number,
     voiceControlPushToTalk: boolean
@@ -46,6 +47,7 @@ const userSchema = new Schema({
         keepWineYear: { type: Boolean, default: false },
         keepWineColor: { type: Boolean, default: false },
         keepWineAttribute: { type: Boolean, default: false },
+        autoIncreaseSampleNumber: { type: Boolean, default: false },
         enableVoiceControl: { type: Boolean, default: true },
         voiceControlDelay: { type: Number, default: 500 },
         voiceControlPushToTalk: { type: Boolean, default: false },

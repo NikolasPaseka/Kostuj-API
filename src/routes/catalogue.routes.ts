@@ -41,7 +41,10 @@ catalogueRouter.route("/:id/importContentData")
     .post(auth, catchAsync(catalogueController.importContentData))
 
 catalogueRouter.route("/:id/autoLabelSamples")
-    .get(catchAsync(catalogueController.autoLabelSamples))
+    .get(auth, catchAsync(catalogueController.autoLabelSamples))
+
+catalogueRouter.route("/:id/autoAssignCommission")
+    .post(auth, catchAsync(catalogueController.autoAssignCommission))
 
 catalogueRouter.route("/:id/images")
     .post(auth, getMulterUpload("catalogueImages", true), catchAsync(catalogueController.uploadCatalogueImages))

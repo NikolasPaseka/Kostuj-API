@@ -16,6 +16,7 @@ import { ISample, Sample } from "../models/Sample";
 import { IGrapeVarietal } from "../models/GrapeVarietal";
 import { AuthorizationManager, AuthorizationRoles } from "../models/utils/AuthorizationRoles";
 import { UserRepository } from "../repositories/UserRepository";
+import { CommissionAssigner } from "../utils/ComissionAssigner";
 
 export class CatalogueController {
 
@@ -369,5 +370,24 @@ export class CatalogueController {
         console.log(`Auto label samples took: ${new Date().getTime() - start} ms`);
     
         res.json(samples);
+    }
+
+    autoAssignCommission = async (req: TokenRequest, res: Response) => {
+        const { id } = req.params;
+        const maxWineSamples = parseInt(req.body.maxWineSamples);
+
+        const catalogueSamples = await this.catalogueRepository.getCatalogueSamples(id);
+        const commissionAssinger = new CommissionAssigner(1, maxWineSamples);
+        const assignedSamples = commissionAssinger.assignCommission(catalogueSamples);
+        
+        const bulkOperations = assignedSamples.map(sample => ({
+            updateOne: {
+                filter: { _id: sample._id },
+                update: { ratingCommission: sample.ratingCommission }
+            }
+        }));
+        await Sample.bulkWrite(bulkOperations);
+
+        res.json(assignedSamples);
     }
 }

@@ -50,6 +50,7 @@ export class WinaryRepository {
 
     async importWinaries(wineries: IWinary[], adminId: ObjectId) {
         const existingWinaries = await this.getWinaries();
+        console.log(wineries)
         const newWinaries = wineries.filter(winery => WineryUtil.checkWineryExists(existingWinaries, winery, adminId.toString()) == null);
         return await Winary.insertMany(newWinaries);
     }

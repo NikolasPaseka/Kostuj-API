@@ -94,7 +94,11 @@ export class UserRepository {
         const ids: string[] = []
         commissionCatalogues.map((element) => { ids.push(element.catalogueId.toString()) });
 
-        return await Catalogue.find({ published: false }).where("_id").in(ids).exec();
+        return await Catalogue.find().where("_id").in(ids).exec();
+    }
+
+    getCommissionMember = async (userId: string, catalogueId: string) => {
+        return await CommissionMember.findOne({ userId, catalogueId });
     }
 
     getRatedSamples = async (userId: string, catalogueId: string) => {

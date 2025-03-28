@@ -174,13 +174,15 @@ export class UserController {
         for (const catalogue of commissionCatalogues) {
             const ratedSamples = await this.userRepository.getRatedSamples(userId, catalogue.id);
             const samples = await this.catalogueRepository.getCatalogueSamples(catalogue.id)
+            const commissionMember = await this.userRepository.getCommissionMember(userId, catalogue.id);
             result.push({ 
                 id: catalogue.id,
                 title: catalogue.title,
                 startDate: catalogue.startDate,
                 imageUrl: catalogue.imageUrl,
                 numberOfRated: ratedSamples.length,
-                numberOfSamples: samples.length
+                numberOfSamples: samples.length,
+                commissionNumber: commissionMember?.commissionNumber 
             });
         }
         return res.json(result);
