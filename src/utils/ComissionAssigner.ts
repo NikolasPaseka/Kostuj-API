@@ -1,50 +1,67 @@
 import { ISample } from "../models/Sample";
+import { WineColorOptions } from "../models/utils/WineColorOptions";
 import { IWine } from "../models/Wine";
 
 export class CommissionAssigner {
-    private commissionCount: number = 0;
-    private maxWineSamples: number = 0;
-
-    constructor(commissionCount: number, maxWineSamples: number) {
-        this.commissionCount = commissionCount;
-        this.maxWineSamples = maxWineSamples;
+    private commissionsCount: {
+        [key in WineColorOptions]: number;
     }
 
-    public assignCommission(catalogueSamples: ISample[]): ISample[] {
-        const sortedSamples = catalogueSamples.sort((a, b) => { 
+    constructor(commissionCount: { [key in WineColorOptions]: number }) {
+        this.commissionsCount = commissionCount;
+    }
+
+    private assignForWineColor(
+        catalogueSamples: ISample[], 
+        wineColor: WineColorOptions, 
+        commissionCount: number,
+        currentCommission: number
+    ): { assignedSamples: ISample[], currentCommission: number } {
+        const filteredSamples = catalogueSamples.filter(sample => {
+            const wine = sample.wineId as unknown as IWine;
+            return wine.color === wineColor;
+        });
+
+        const sortedSamples = filteredSamples.sort((a, b) => {
             const wineA = a.wineId as unknown as IWine;
             const wineB = b.wineId as unknown as IWine;
 
-            if (wineA.color !== wineB.color) {
-                return wineA.color.localeCompare(wineB.color);
-            }
             return wineA.name.localeCompare(wineB.name);
         });
 
-        let i = 0;
-        let currentCommission = 1;
-
-        let color = "";
-        if (sortedSamples.length > 0) {
-            color = (sortedSamples[0].wineId as unknown as IWine).color;
-        }
-
+        const winesPerCommission = Math.ceil(sortedSamples.length / commissionCount);
+        let i = 1;
         for (const sample of sortedSamples) {
-            const wine = sample.wineId as unknown as IWine;
-
-            if (wine.color !== color) {
-                color = wine.color;
-                i = 0;
-                currentCommission++;
-            }
-            if (i >= this.maxWineSamples) {
-                i = 0;
+            if (i > winesPerCommission) {
+                i = 1;
                 currentCommission++;
             }
             sample.ratingCommission = currentCommission;
             i++;
         }
+        // fort next color commission shall be changed
+        currentCommission++;
 
-        return sortedSamples;
+        return { assignedSamples: sortedSamples, currentCommission };
+    }
+
+    public assignCommission(catalogueSamples: ISample[]): ISample[] {
+        let currentCommission = 1;
+        let assignedSamples: ISample[] = [];
+
+        // Assign commissions for each wine color
+
+        for (const wineColor of Object.values(WineColorOptions)) {
+            const result = this.assignForWineColor(
+                catalogueSamples,
+                wineColor as WineColorOptions,
+                this.commissionsCount[wineColor.valueOf()],
+                currentCommission
+            );
+            assignedSamples.push(...result.assignedSamples);
+            currentCommission = result.currentCommission;
+        }
+
+        return assignedSamples
     }
 }

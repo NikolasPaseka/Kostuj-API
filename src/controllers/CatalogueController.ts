@@ -17,6 +17,7 @@ import { IGrapeVarietal } from "../models/GrapeVarietal";
 import { AuthorizationManager, AuthorizationRoles } from "../models/utils/AuthorizationRoles";
 import { UserRepository } from "../repositories/UserRepository";
 import { CommissionAssigner } from "../utils/ComissionAssigner";
+import { WineColorOptions } from "../models/utils/WineColorOptions";
 
 export class CatalogueController {
 
@@ -375,9 +376,11 @@ export class CatalogueController {
     autoAssignCommission = async (req: TokenRequest, res: Response) => {
         const { id } = req.params;
         const maxWineSamples = parseInt(req.body.maxWineSamples);
+        const { commissionsCount } = req.body as { commissionsCount: { [key in WineColorOptions]: number } };
+        console.log(commissionsCount)
 
         const catalogueSamples = await this.catalogueRepository.getCatalogueSamples(id);
-        const commissionAssinger = new CommissionAssigner(1, maxWineSamples);
+        const commissionAssinger = new CommissionAssigner(commissionsCount);
         const assignedSamples = commissionAssinger.assignCommission(catalogueSamples);
         
         const bulkOperations = assignedSamples.map(sample => ({
